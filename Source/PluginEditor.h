@@ -17,7 +17,16 @@
 class AudiopluginAudioProcessorEditor  : public juce::AudioProcessorEditor
 {
 public:
-    AudiopluginAudioProcessorEditor (AudiopluginAudioProcessor&);
+    enum
+    {
+        marginTop = 80,
+        gainLabelWidth = 80,
+        gainSliderWidth = 300
+    };
+
+    typedef juce::AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
+
+    AudiopluginAudioProcessorEditor(AudiopluginAudioProcessor& p, juce::AudioProcessorValueTreeState& vts);
     ~AudiopluginAudioProcessorEditor() override;
 
     //==============================================================================
@@ -25,9 +34,13 @@ public:
     void resized() override;
 
 private:
-    // This reference is provided as a quick way for your editor to
-    // access the processor object that created it.
     AudiopluginAudioProcessor& audioProcessor;
+    juce::AudioProcessorValueTreeState& valueTreeState;
+
+    // Gain
+    juce::Label gainLabel;
+    juce::Slider gainSlider;
+    std::unique_ptr<SliderAttachment> gainAttachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudiopluginAudioProcessorEditor)
 };

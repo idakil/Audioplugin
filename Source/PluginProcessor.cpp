@@ -11,21 +11,33 @@
 
 //==============================================================================
 AudiopluginAudioProcessor::AudiopluginAudioProcessor()
-#ifndef JucePlugin_PreferredChannelConfigurations
-     : AudioProcessor (BusesProperties()
-                     #if ! JucePlugin_IsMidiEffect
-                      #if ! JucePlugin_IsSynth
-                       .withInput  ("Input",  juce::AudioChannelSet::stereo(), true)
-                      #endif
-                       .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
-                     #endif
-                       )
-#endif
+     #ifndef JucePlugin_PreferredChannelConfigurations
+     : AudioProcessor(BusesProperties()
+            #if ! JucePlugin_IsMidiEffect
+                #if ! JucePlugin_IsSynth
+                .withInput("Input", juce::AudioChannelSet::stereo(), true)
+                #endif
+            .withOutput("Output", juce::AudioChannelSet::stereo(), true)
+            #endif
+        ), parameters(*this, nullptr, juce::Identifier("TESTI"), createParameterLayout())
+    #endif
 {
+    gainParameter = parameters.getRawParameterValue("gain");
 }
 
 AudiopluginAudioProcessor::~AudiopluginAudioProcessor()
 {
+}
+
+juce::AudioProcessorValueTreeState::ParameterLayout AudiopluginAudioProcessor::createParameterLayout()
+{
+    // Here we can programatically add parameters to the parameter layout.
+    juce::AudioProcessorValueTreeState::ParameterLayout params;
+
+    // ID, name, min, max, default
+    params.add(std::make_unique<juce::AudioParameterFloat>("gain", "Gain Name", 0.0f, 1.0f, 0.5f));
+
+    return params;
 }
 
 //==============================================================================
@@ -93,8 +105,7 @@ void AudiopluginAudioProcessor::changeProgramName (int index, const juce::String
 //==============================================================================
 void AudiopluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    // Use this method as the place to do any pre-playback
-    // initialisation that you need..
+    previousGain = *gainParameter;
 }
 
 void AudiopluginAudioProcessor::releaseResources()
@@ -154,6 +165,18 @@ void AudiopluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
 
         // ..do something to the data...
     }
+
+    // Simple gain for demostration purposes
+    float currentGain = *gainParameter;
+    if (currentGain == previousGain)
+    {
+        buffer.applyGain(currentGain);
+    }
+    else
+    {
+        buffer.applyGainRamp(0, buffer.getNumSamples(), previousGain, currentGain);
+        previousGain = currentGain;
+    }
 }
 
 //==============================================================================
@@ -164,21 +187,23 @@ bool AudiopluginAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* AudiopluginAudioProcessor::createEditor()
 {
-    return new AudiopluginAudioProcessorEditor (*this);
+    return new AudiopluginAudioProcessorEditor (*this, parameters);
 }
 
-//==============================================================================
 void AudiopluginAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
 {
-    // You should use this method to store your parameters in the memory block.
-    // You could do that either as raw data, or use the XML or ValueTree classes
-    // as intermediaries to make it easy to save and load complex data.
+    auto state = parameters.copyState();
+    std::unique_ptr<juce::XmlElement> xml(state.createXml());
+    copyXmlToBinary(*xml, destData);
 }
 
 void AudiopluginAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
-    // You should use this method to restore your parameters from this memory block,
-    // whose contents will have been created by the getStateInformation() call.
+    std::unique_ptr<juce::XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
+    
+    if (xmlState.get() != nullptr)
+        if (xmlState->hasTagName(parameters.state.getType()))
+            parameters.replaceState(juce::ValueTree::fromXml(*xmlState));
 }
 
 //==============================================================================
