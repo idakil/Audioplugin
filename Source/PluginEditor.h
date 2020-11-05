@@ -8,13 +8,13 @@
 
 #pragma once
 
-#include <JuceHeader.h>
+#include "../JuceLibraryCode/JuceHeader.h"
 #include "PluginProcessor.h"
 
 //==============================================================================
 /**
 */
-class AudiopluginAudioProcessorEditor  : public juce::AudioProcessorEditor
+class AudiopluginAudioProcessorEditor  : public AudioProcessorEditor
 {
 public:
     enum
@@ -35,12 +35,26 @@ public:
 
 private:
     AudiopluginAudioProcessor& audioProcessor;
-    juce::AudioProcessorValueTreeState& valueTreeState;
+    AudioProcessorValueTreeState& valueTreeState;
+    FlexBox flexBox;
 
-    // Gain
-    juce::Label gainLabel;
-    juce::Slider gainSlider;
-    std::unique_ptr<SliderAttachment> gainAttachment;
+    // Delay
+    Label delayLenghtLabel;
+    Slider delayLenghtSlider;
+    Label delayModAmountLabel;
+    Slider delayModAmountSlider;
+    Label delayLfoSpeedLabel;
+    Slider delayLfoSpeedSlider;
+    Label delayFeedbackLabel;
+    Slider delayFeedbackSlider;
+    Label delaywetDryMixLabel;
+    Slider delaywetDryMixSlider;
+    
+    std::unique_ptr<SliderAttachment> delayLenghtAttachment;
+    std::unique_ptr<SliderAttachment> delayModAmountAttachment;
+    std::unique_ptr<SliderAttachment> delayLfoSpeedAttachment;
+    std::unique_ptr<SliderAttachment> delayFeedbackAttachment;
+    std::unique_ptr<SliderAttachment> delaywetDryMixAttachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudiopluginAudioProcessorEditor)
 };

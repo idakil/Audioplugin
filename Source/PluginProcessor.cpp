@@ -22,26 +22,35 @@ AudiopluginAudioProcessor::AudiopluginAudioProcessor()
         ), parameters(*this, nullptr, juce::Identifier("TESTI"), createParameterLayout())
     #endif
 {
-    gainParameter = parameters.getRawParameterValue("gain");
+    delayLenghtParam    = parameters.getRawParameterValue("delay_lenght");
+    delayModAmountParam = parameters.getRawParameterValue("delay_modamount");
+    delayLfoSpeedParam  = parameters.getRawParameterValue("delay_lfospeed");
+    delayFeedbackParam  = parameters.getRawParameterValue("delay_feedback");
+    delaywetDryMixParam = parameters.getRawParameterValue("delay_wetdry");
 }
 
 AudiopluginAudioProcessor::~AudiopluginAudioProcessor()
 {
 }
 
-juce::AudioProcessorValueTreeState::ParameterLayout AudiopluginAudioProcessor::createParameterLayout()
+AudioProcessorValueTreeState::ParameterLayout AudiopluginAudioProcessor::createParameterLayout()
 {
     // Here we can programatically add parameters to the parameter layout.
-    juce::AudioProcessorValueTreeState::ParameterLayout params;
+    AudioProcessorValueTreeState::ParameterLayout params;
 
+    // Delay 
     // ID, name, min, max, default
-    params.add(std::make_unique<juce::AudioParameterFloat>("gain", "Gain Name", 0.0f, 1.0f, 0.5f));
+    params.add(std::make_unique<AudioParameterFloat>("delay_lenght", "Delay Lenght (s)", 0.001f, 2.000f, 0.001f));
+    params.add(std::make_unique<AudioParameterFloat>("delay_modamount", "Delay Modulation (ms)", 0.0f, 10.0f, 1.0f));
+    params.add(std::make_unique<AudioParameterFloat>("delay_lfospeed", "Delay LFO Speed", 0.0f, 1.0f, 0.5f));
+    params.add(std::make_unique<AudioParameterFloat>("delay_feedback", "Delay Feedback Amount", 0.0f, 1.0f, 0.1f));
+    params.add(std::make_unique<AudioParameterFloat>("delay_wetdry", "Delay Wet Dry Mix", 0.0f, 1.0f, 0.5f));
 
     return params;
 }
 
 //==============================================================================
-const juce::String AudiopluginAudioProcessor::getName() const
+const String AudiopluginAudioProcessor::getName() const
 {
     return JucePlugin_Name;
 }
@@ -105,7 +114,25 @@ void AudiopluginAudioProcessor::changeProgramName (int index, const juce::String
 //==============================================================================
 void AudiopluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    previousGain = *gainParameter;
+
+    const int maxDelayLineInSamples = 10 * sampleRate;
+
+    // To assign a new object to std::unique_ptr, we call its reset().
+    // This deletes the old object, if one exists, and moves to point to the new object.
+    leftDelayLine.reset(new DelayLine(maxDelayLineInSamples));
+    rightDelayLine.reset(new DelayLine(maxDelayLineInSamples));
+
+    // Create our LFOs
+    const double frequencyInHz = *delayLfoSpeedParam;
+    const double leftStartingPhase = MathConstants<double>::twoPi * 0;
+    const double rightStartingPhase = MathConstants<double>::twoPi * 0.25;
+
+    leftLfoOsc.reset(new SineOscillator(sampleRate, frequencyInHz, leftStartingPhase));
+    rightLfoOsc.reset(new SineOscillator(sampleRate, frequencyInHz, rightStartingPhase));
+
+    // These will be used for feedback, initialise to zero
+    prevLeftDelayedSample = 0;
+    prevRightDelayedSample = 0;
 }
 
 void AudiopluginAudioProcessor::releaseResources()
@@ -144,38 +171,93 @@ void AudiopluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
-    // In case we have more outputs than inputs, this code clears any output
-    // channels that didn't contain input data, (because these aren't
-    // guaranteed to be empty - they may contain garbage).
-    // This is here to avoid people getting screaming feedback
-    // when they first compile a plugin, but obviously you don't need to keep
-    // this code if your algorithm always overwrites all the output channels.
-    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
-        buffer.clear (i, 0, buffer.getNumSamples());
+    const float maxAmplitudeInSeconds = *delayModAmountParam / 1000;
+    const float baseDelayInSeconds = *delayLenghtParam;
+    const float wetDryRatio = *delaywetDryMixParam;
+    const double samplerate = getSampleRate();
 
-    // This is the place where you'd normally do the guts of your plugin's
-    // audio processing...
-    // Make sure to reset the state if your inner loop is processing
-    // the samples and the outer loop is handling the channels.
-    // Alternatively, you can process the samples with the channels
-    // interleaved by keeping the same state.
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
+    const float feedbackGain = *delayFeedbackParam;
+
+    const int numSamplesInInput = buffer.getNumSamples();
+
+    // Update the frequency of the LFO
+    const float lfoFreqInSecs = *delayLfoSpeedParam;
+    leftLfoOsc->setFrequency(lfoFreqInSecs);
+
+    // Mono processing
+    if (totalNumInputChannels == 1 && totalNumOutputChannels == 1)
     {
-        auto* channelData = buffer.getWritePointer (channel);
+        // Get access to the audio channel
+        float* monoData = buffer.getWritePointer(0);
 
-        // ..do something to the data...
+        // Process each sample
+        for (int i = 0; i < numSamplesInInput; i++)
+        {
+            float inputSample = monoData[i];
+
+            // Since we have an LFO, the delay in samples changes for every sample
+            float delayInSamples = baseDelayInSeconds * samplerate + leftLfoOsc->getNextSample() * maxAmplitudeInSeconds * samplerate;
+
+            // Push the sample to the delay line, and add the previous sample for the feedback effect
+            leftDelayLine->pushSample(inputSample + prevLeftDelayedSample * feedbackGain);
+
+            // Get the new delayed sample
+            float wetSample = leftDelayLine->getDelayedSampleInterp(delayInSamples);
+            float drySample = monoData[i];
+
+            // Replace the output sample with a mixture of wet and dry samples
+            monoData[i] = wetDryRatio * wetSample + (1 - wetDryRatio) * drySample;
+
+            // Store what the previous sample was to use it the next time around
+            prevLeftDelayedSample = wetSample;
+        }
     }
+    // Stereo processing
+    // This is essentially the mono version but doubled up for both channels
+    // We could generalise and refactor the processing to a separate function and call it for both channels as needed
+    // instead of copying the code like this.
+    else if (totalNumOutputChannels == 2)
+    {
+        // update the frequency of lfo
+        rightLfoOsc->setFrequency(lfoFreqInSecs);
 
-    // Simple gain for demostration purposes
-    float currentGain = *gainParameter;
-    if (currentGain == previousGain)
-    {
-        buffer.applyGain(currentGain);
-    }
-    else
-    {
-        buffer.applyGainRamp(0, buffer.getNumSamples(), previousGain, currentGain);
-        previousGain = currentGain;
+        float* leftData = buffer.getWritePointer(0);
+        float* rightData = buffer.getWritePointer(1);
+
+        for (int i = 0; i < numSamplesInInput; i++)
+        {
+            float leftSample = leftData[i];
+            float rightSample;
+
+            // Handle stereo to stereo
+            if (totalNumInputChannels == 2)
+            {
+                rightSample = rightData[i];
+            }
+            // For mono to stereo, use the left channel input for right channel as well
+            else
+            {
+                rightSample = leftSample;
+            }
+
+            float leftDelayInSamples = baseDelayInSeconds * samplerate + leftLfoOsc->getNextSample() * maxAmplitudeInSeconds * samplerate;
+            float rightDelayInSamples = baseDelayInSeconds * samplerate + rightLfoOsc->getNextSample() * maxAmplitudeInSeconds * samplerate;
+
+            leftDelayLine->pushSample(leftSample + prevLeftDelayedSample * feedbackGain);
+            rightDelayLine->pushSample(rightSample + prevRightDelayedSample * feedbackGain);
+
+            float leftWetSample = leftDelayLine->getDelayedSampleInterp(leftDelayInSamples);
+            float rightWetSample = rightDelayLine->getDelayedSampleInterp(rightDelayInSamples);
+
+            float leftDrySample = leftData[i];
+            float rightDrySample = rightData[i];
+
+            leftData[i] = wetDryRatio * leftWetSample + (1 - wetDryRatio) * leftDrySample;
+            rightData[i] = wetDryRatio * rightWetSample + (1 - wetDryRatio) * rightDrySample;
+
+            prevLeftDelayedSample = leftWetSample;
+            prevRightDelayedSample = rightWetSample;
+        }
     }
 }
 
