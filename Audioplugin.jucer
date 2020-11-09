@@ -4,6 +4,23 @@
               addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1">
   <MAINGROUP id="TUW7kz" name="Audioplugin">
     <GROUP id="{0D976D99-0CB0-3FE0-034B-54280EB31E69}" name="Source">
+      <GROUP id="{7AC7A057-39B7-0C01-C03C-A48824BCB560}" name="Compressor">
+        <FILE id="kiEfdJ" name="CircularBuffer.cpp" compile="1" resource="0"
+              file="Source/CircularBuffer.cpp"/>
+        <FILE id="C3ij4B" name="CircularBuffer.h" compile="0" resource="0"
+              file="Source/CircularBuffer.h"/>
+        <FILE id="UWV17D" name="Compressor.cpp" compile="1" resource="0" file="Source/Compressor.cpp"/>
+        <FILE id="Cxm56n" name="Compressor.h" compile="0" resource="0" file="Source/Compressor.h"/>
+      </GROUP>
+      <FILE id="ZhKFtb" name="MainView.cpp" compile="1" resource="0" file="Source/MainView.cpp"/>
+      <FILE id="jLKu7X" name="MainView.h" compile="0" resource="0" file="Source/MainView.h"/>
+      <GROUP id="{10E1F72A-BB43-E698-98A3-368A6F91B1E9}" name="EQ">
+        <FILE id="UfBY5G" name="biquad.hpp" compile="1" resource="0" file="Source/biquad.hpp"/>
+        <FILE id="BFehKs" name="Equaliser.cpp" compile="1" resource="0" file="Source/Equaliser.cpp"/>
+        <FILE id="DxqPAl" name="Equaliser.h" compile="0" resource="0" file="Source/Equaliser.h"/>
+        <FILE id="EWjNvJ" name="FilterBand.cpp" compile="1" resource="0" file="Source/FilterBand.cpp"/>
+        <FILE id="Qa4oRg" name="FilterBand.h" compile="0" resource="0" file="Source/FilterBand.h"/>
+      </GROUP>
       <FILE id="SOLc0P" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="AAROw8" name="PluginProcessor.h" compile="0" resource="0"

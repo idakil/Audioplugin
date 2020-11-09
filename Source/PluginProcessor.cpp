@@ -11,23 +11,52 @@
 
 //==============================================================================
 AudiopluginAudioProcessor::AudiopluginAudioProcessor()
-     #ifndef JucePlugin_PreferredChannelConfigurations
-     : AudioProcessor(BusesProperties()
-            #if ! JucePlugin_IsMidiEffect
-                #if ! JucePlugin_IsSynth
-                .withInput("Input", juce::AudioChannelSet::stereo(), true)
-                #endif
-            .withOutput("Output", juce::AudioChannelSet::stereo(), true)
-            #endif
-        ), parameters(*this, nullptr, juce::Identifier("TESTI"), createParameterLayout())
+#ifndef JucePlugin_PreferredChannelConfigurations
+    : AudioProcessor(BusesProperties()
+#if ! JucePlugin_IsMidiEffect
+#if ! JucePlugin_IsSynth
+        .withInput("Input", juce::AudioChannelSet::stereo(), true)
+#endif
+        .withOutput("Output", juce::AudioChannelSet::stereo(), true)
+#endif
+    ), parameters(*this, nullptr, Identifier("params"), {
+          std::make_unique<AudioParameterFloat>(
+              "thresh",
+              "Threshold",
+              NormalisableRange<float>(-60.0f, 20.0f, 0.01f),
+              10.0f),
+          std::make_unique<AudioParameterFloat>(
+              "ratio",
+              "Ratio",
+              NormalisableRange<float>(1.0f, 20.0f, 0.01f),
+              2.0f),
+          std::make_unique<AudioParameterFloat>(
+              "knee",
+              "KneeWidth",
+              NormalisableRange<float>(0.0f, 24.0f, 0.01f),
+              0.0f),
+          std::make_unique<AudioParameterFloat>(
+              "attack",
+              "Attack",
+              NormalisableRange<float>(0.01f, 500.0, 0.01f),
+              100.0f),
+          std::make_unique<AudioParameterFloat>(
+              "release",
+              "Release",
+              NormalisableRange<float>(0.01f, 2000.0f, 0.01f),
+              500.0f)
+        }
+    )
+    , band0(*this, "Band 0", 1000,  0, samplerate) // call the constructors of FilterBands on initialisation
+    , band1(*this, "Band 1", 4000,  1, samplerate)
     #endif
 {
-    gainParameter = parameters.getRawParameterValue("gain");
 }
 
 AudiopluginAudioProcessor::~AudiopluginAudioProcessor()
 {
 }
+
 
 juce::AudioProcessorValueTreeState::ParameterLayout AudiopluginAudioProcessor::createParameterLayout()
 {
@@ -36,7 +65,6 @@ juce::AudioProcessorValueTreeState::ParameterLayout AudiopluginAudioProcessor::c
 
     // ID, name, min, max, default
     params.add(std::make_unique<juce::AudioParameterFloat>("gain", "Gain Name", 0.0f, 1.0f, 0.5f));
-
     return params;
 }
 
@@ -105,7 +133,21 @@ void AudiopluginAudioProcessor::changeProgramName (int index, const juce::String
 //==============================================================================
 void AudiopluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    previousGain = *gainParameter;
+
+    // store this for later use
+    this->samplerate = sampleRate;
+    int numChannels = getTotalNumInputChannels();
+    band0.prepare(numChannels);
+    band1.prepare(numChannels);
+
+    for (int channel = 0; channel < getNumOutputChannels(); channel++) {
+        allCompressors.add(Compressor());
+    }
+    threshParam = parameters.getRawParameterValue("thresh");
+    slopeParam = parameters.getRawParameterValue("ratio");
+    kneeParam = parameters.getRawParameterValue("knee");
+    attackParam = parameters.getRawParameterValue("attack");
+    releaseParam = parameters.getRawParameterValue("release");
 }
 
 void AudiopluginAudioProcessor::releaseResources()
@@ -138,11 +180,29 @@ bool AudiopluginAudioProcessor::isBusesLayoutSupported (const BusesLayout& layou
 }
 #endif
 
+
+/*
+* void CompressorAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
+{
+    float at = 1 - std::pow(MathConstants<float>::euler, ((1 / getSampleRate()) * -2.2f) / (*attackParam / 1000.0f));
+    float rt = 1 - std::pow(MathConstants<float>::euler, ((1 / getSampleRate()) * -2.2f) / (*releaseParam / 1000.0f));
+
+    for (int i = 0; i < buffer.getNumSamples(); i++) {
+        for (int channel = 0; channel < getTotalNumOutputChannels(); channel++) {
+            auto* data = buffer.getWritePointer(channel);
+            Compressor* comp = &allCompressors.getReference(channel);
+            data[i] = comp->compressSample(data[i], *threshParam, *slopeParam, at, rt, *kneeParam);
+        }
+    }
+}
+*/
 void AudiopluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
+    const int numSamples = buffer.getNumSamples();
+    const int numChannels = buffer.getNumChannels();
 
     // In case we have more outputs than inputs, this code clears any output
     // channels that didn't contain input data, (because these aren't
@@ -151,7 +211,7 @@ void AudiopluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
     // when they first compile a plugin, but obviously you don't need to keep
     // this code if your algorithm always overwrites all the output channels.
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
-        buffer.clear (i, 0, buffer.getNumSamples());
+        buffer.clear (i, 0, numSamples);
 
     // This is the place where you'd normally do the guts of your plugin's
     // audio processing...
@@ -162,21 +222,30 @@ void AudiopluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
         auto* channelData = buffer.getWritePointer (channel);
+        for (int i = 0; i < numSamples; ++i)
+        {
+            // for easier reading, copy the sample from io buffer
+            // this should be optimised by the compiler
+            auto sample = channelData[i];
 
+            // Replace sample with all bands, all bands run in series
+            // There's an array of Biquad objects inside each band, with the name biquad.
+            // A specific Biquad object per channel is then accessed with the [ch], and performFilter is called
+            // It takes a sample as an input, and returns a sample, that we replace our "sample" with.
+            sample = band0.biquads[channel].performFilter(sample);
+            sample = band1.biquads[channel].performFilter(sample);
+
+            // write back to io buffer
+            channelData[i] = sample;
+        }
         // ..do something to the data...
+        
     }
+}
 
-    // Simple gain for demostration purposes
-    float currentGain = *gainParameter;
-    if (currentGain == previousGain)
-    {
-        buffer.applyGain(currentGain);
-    }
-    else
-    {
-        buffer.applyGainRamp(0, buffer.getNumSamples(), previousGain, currentGain);
-        previousGain = currentGain;
-    }
+void equalise(int numSamples, float *channelData, int channel) {
+    AudiopluginAudioProcessor b;
+
 }
 
 //==============================================================================

@@ -9,6 +9,8 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "FilterBand.h"
+#include "Compressor.h"
 
 //==============================================================================
 /**
@@ -53,13 +55,17 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+    FilterBand band0;
+    FilterBand band1;
+
 private:
     //==============================================================================
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
     juce::AudioProcessorValueTreeState parameters;
-    // Gain
-    float previousGain;
-    std::atomic<float>* gainParameter = nullptr;
-    //==============================================================================
+
+    Array<Compressor> allCompressors;
+    std::atomic<float>* threshParam, * slopeParam, * kneeParam, * attackParam, * releaseParam;
+
+    double samplerate;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudiopluginAudioProcessor)
 };

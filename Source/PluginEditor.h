@@ -10,6 +10,9 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
+#include "MainView.h"
+
+using namespace juce;
 
 //==============================================================================
 /**
@@ -25,22 +28,26 @@ public:
     };
 
     typedef juce::AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
-
     AudiopluginAudioProcessorEditor(AudiopluginAudioProcessor& p, juce::AudioProcessorValueTreeState& vts);
     ~AudiopluginAudioProcessorEditor() override;
-
     //==============================================================================
     void paint (juce::Graphics&) override;
     void resized() override;
+    void addSlider(String name, String labelText, Slider& slider, Label& label, std::unique_ptr<SliderAttachment>& attachment);
+
 
 private:
     AudiopluginAudioProcessor& audioProcessor;
-    juce::AudioProcessorValueTreeState& valueTreeState;
+    FlexBox flexBox;
 
-    // Gain
-    juce::Label gainLabel;
-    juce::Slider gainSlider;
-    std::unique_ptr<SliderAttachment> gainAttachment;
+    //MainView view;
+
+    juce::AudioProcessorValueTreeState& valueTreeState;
+    EqBandComponent bandKnobs0;
+    EqBandComponent bandKnobs1;
+    Slider threshSlider, slopeSlider, kneeSlider, attackSlider, releaseSlider;
+    Label threshLabel, slopeLabel, kneeLabel, attackLabel, releaseLabel;
+    std::unique_ptr<SliderAttachment> threshAttachment, slopeAttachment, kneeAttachment, attackAttachment, releaseAttachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudiopluginAudioProcessorEditor)
 };
