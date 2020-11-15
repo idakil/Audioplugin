@@ -10,13 +10,15 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
-#include "MainView.h"
+#include "Equaliser.h"
+//#include "MainView.h"
 
 using namespace juce;
 
 //==============================================================================
 /**
 */
+
 class AudiopluginAudioProcessorEditor  : public juce::AudioProcessorEditor
 {
 public:
@@ -24,7 +26,7 @@ public:
     {
         marginTop = 80,
         gainLabelWidth = 80,
-        gainSliderWidth = 300
+        gainSliderWidth = 300,
     };
 
     typedef juce::AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
@@ -35,7 +37,6 @@ public:
     void resized() override;
     void addSlider(String name, String labelText, Slider& slider, Label& label, std::unique_ptr<SliderAttachment>& attachment);
 
-
 private:
     AudiopluginAudioProcessor& audioProcessor;
     FlexBox flexBox;
@@ -43,11 +44,10 @@ private:
     //MainView view;
 
     juce::AudioProcessorValueTreeState& valueTreeState;
-    EqBandComponent bandKnobs0;
-    EqBandComponent bandKnobs1;
+
     Slider threshSlider, slopeSlider, kneeSlider, attackSlider, releaseSlider;
     Label threshLabel, slopeLabel, kneeLabel, attackLabel, releaseLabel;
     std::unique_ptr<SliderAttachment> threshAttachment, slopeAttachment, kneeAttachment, attackAttachment, releaseAttachment;
-
+    
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudiopluginAudioProcessorEditor)
 };

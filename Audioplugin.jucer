@@ -4,13 +4,22 @@
               addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1">
   <MAINGROUP id="TUW7kz" name="Audioplugin">
     <GROUP id="{0D976D99-0CB0-3FE0-034B-54280EB31E69}" name="Source">
+      <FILE id="d8Y1R3" name="ProcessorBase.h" compile="0" resource="0" file="Source/ProcessorBase.h"/>
+      <GROUP id="{B7E3866F-9D0C-30CA-C499-3586E5B91E09}" name="BitCrusher">
+        <FILE id="N7sTXZ" name="BitCrusher.cpp" compile="1" resource="0" file="Source/BitCrusher.cpp"/>
+        <FILE id="mBvh6X" name="BitCrusher.h" compile="0" resource="0" file="Source/BitCrusher.h"/>
+        <FILE id="oF554P" name="BitCrusherProcessor.cpp" compile="1" resource="0"
+              file="Source/BitCrusherProcessor.cpp"/>
+        <FILE id="vUwkXL" name="BitCrusherProcessor.h" compile="0" resource="0"
+              file="Source/BitCrusherProcessor.h"/>
+      </GROUP>
       <GROUP id="{7AC7A057-39B7-0C01-C03C-A48824BCB560}" name="Compressor">
-        <FILE id="kiEfdJ" name="CircularBuffer.cpp" compile="1" resource="0"
-              file="Source/CircularBuffer.cpp"/>
         <FILE id="C3ij4B" name="CircularBuffer.h" compile="0" resource="0"
               file="Source/CircularBuffer.h"/>
         <FILE id="UWV17D" name="Compressor.cpp" compile="1" resource="0" file="Source/Compressor.cpp"/>
         <FILE id="Cxm56n" name="Compressor.h" compile="0" resource="0" file="Source/Compressor.h"/>
+        <FILE id="OORfxd" name="CompressorProcessor.h" compile="0" resource="0"
+              file="Source/CompressorProcessor.h"/>
       </GROUP>
       <FILE id="ZhKFtb" name="MainView.cpp" compile="1" resource="0" file="Source/MainView.cpp"/>
       <FILE id="jLKu7X" name="MainView.h" compile="0" resource="0" file="Source/MainView.h"/>
@@ -18,6 +27,8 @@
         <FILE id="UfBY5G" name="biquad.hpp" compile="1" resource="0" file="Source/biquad.hpp"/>
         <FILE id="BFehKs" name="Equaliser.cpp" compile="1" resource="0" file="Source/Equaliser.cpp"/>
         <FILE id="DxqPAl" name="Equaliser.h" compile="0" resource="0" file="Source/Equaliser.h"/>
+        <FILE id="JS7VVW" name="EqualiserProcessor.h" compile="0" resource="0"
+              file="Source/EqualiserProcessor.h"/>
         <FILE id="EWjNvJ" name="FilterBand.cpp" compile="1" resource="0" file="Source/FilterBand.cpp"/>
         <FILE id="Qa4oRg" name="FilterBand.h" compile="0" resource="0" file="Source/FilterBand.h"/>
       </GROUP>

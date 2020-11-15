@@ -10,6 +10,13 @@
 
 #pragma once
 #include "CircularBuffer.h"
+/*
+struct CompressorComponent : public Component {
+    Slider threshSlider, slopeSlider, kneeSlider, attackSlider, releaseSlider;
+    Label threshLabel, slopeLabel, kneeLabel, attackLabel, releaseLabel;
+    SliderParameterAttachment threshAttachment, slopeAttachment, kneeAttachment, attackAttachment, releaseAttachment;
+
+};*/
 
 class Compressor {
 public:

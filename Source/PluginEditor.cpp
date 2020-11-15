@@ -9,18 +9,18 @@
 #include "PluginEditor.h"
 //==============================================================================
 AudiopluginAudioProcessorEditor::AudiopluginAudioProcessorEditor (AudiopluginAudioProcessor& p, juce::AudioProcessorValueTreeState& vts)
-    : AudioProcessorEditor (&p), audioProcessor (p), valueTreeState(vts), bandKnobs0(p.band0), bandKnobs1(p.band1)
+    : AudioProcessorEditor (&p), audioProcessor (p), valueTreeState(vts)
 {
     addSlider("thresh", "Threshold", threshSlider, threshLabel, threshAttachment);
     addSlider("ratio", "Ratio", slopeSlider, slopeLabel, slopeAttachment);
     addSlider("knee", "Knee", kneeSlider, kneeLabel, kneeAttachment);
     addSlider("attack", "Attack", attackSlider, attackLabel, attackAttachment);
     addSlider("release", "Release", releaseSlider, releaseLabel, releaseAttachment);
-
-    addAndMakeVisible(bandKnobs0);
-    addAndMakeVisible(bandKnobs1);
-    flexBox.items.add(juce::FlexItem(bandKnobs0).withMinHeight(10.0f).withFlex(1));
-    flexBox.items.add(juce::FlexItem(bandKnobs1).withMinHeight(10.0f).withFlex(1));
+ 
+    //addAndMakeVisible(bandKnobs0);
+    //addAndMakeVisible(bandKnobs1);
+    //flexBox.items.add(juce::FlexItem(bandKnobs0).withMinHeight(10.0f).withFlex(1));
+    //flexBox.items.add(juce::FlexItem(bandKnobs1).withMinHeight(10.0f).withFlex(1));
 
     // Flexbox Style
     flexBox.flexDirection = juce::FlexBox::Direction::column;
@@ -42,8 +42,8 @@ void AudiopluginAudioProcessorEditor::resized()
 {
     auto bounds = getLocalBounds();
     int h = bounds.getHeight() / 2;
-    bandKnobs0.setBounds(bounds.removeFromTop(h));
-    bandKnobs1.setBounds(bounds);
+    //bandKnobs0.setBounds(bounds.removeFromTop(h));
+    //bandKnobs1.setBounds(bounds);
     threshSlider.setBounds(100, 0, 200, 50);
     slopeSlider.setBounds(100, 50, 200, 50);
     kneeSlider.setBounds(100, 100, 200, 50);

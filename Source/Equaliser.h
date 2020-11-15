@@ -1,6 +1,6 @@
 #pragma once
 #include <JuceHeader.h>
-#include "PluginProcessor.h"
+#include "EqualiserProcessor.h"
 
 struct EqBandComponent : public Component
 {
@@ -21,7 +21,7 @@ struct EqBandComponent : public Component
 class Equaliser : public Component
 {
 public:
-	Equaliser(AudiopluginAudioProcessor&);
+	Equaliser(EqualiserProcessor&);
     ~Equaliser() override;
     void paint(juce::Graphics& g) {
 
@@ -38,7 +38,7 @@ public:
         setSize(400, 300);
     }
 private:
-	AudiopluginAudioProcessor& audioProcessor;
+    EqualiserProcessor& audioProcessor;
     EqBandComponent bandKnobs0;
     EqBandComponent bandKnobs1;
 

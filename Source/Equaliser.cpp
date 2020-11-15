@@ -1,6 +1,6 @@
 
 #include "Equaliser.h"
-#include "PluginProcessor.h"
+#include "EqualiserProcessor.h"
 
 EqBandComponent::EqBandComponent(FilterBand& band)
     : freqSlider(Slider::LinearVertical,Slider::TextBoxBelow)
@@ -14,7 +14,6 @@ EqBandComponent::EqBandComponent(FilterBand& band)
     addAndMakeVisible(qualSlider);
     addAndMakeVisible(gainSlider);
 }
-
 
 void EqBandComponent::paint(juce::Graphics& g)
 {
@@ -30,8 +29,7 @@ void EqBandComponent::resized()
     gainSlider.setBounds(bounds);
 }
 
-
-Equaliser::Equaliser(AudiopluginAudioProcessor& p)
+Equaliser::Equaliser(EqualiserProcessor& p)
     : audioProcessor(p)
     , bandKnobs0(p.band0)
     , bandKnobs1(p.band1)
