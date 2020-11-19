@@ -40,9 +40,9 @@ AudioProcessorValueTreeState::ParameterLayout AudiopluginAudioProcessor::createP
 
     // Delay 
     // ID, name, min, max, default
-    params.add(std::make_unique<AudioParameterFloat>("delay_lenght", "Delay Lenght (s)", 0.001f, 2.000f, 0.001f));
-    params.add(std::make_unique<AudioParameterFloat>("delay_modamount", "Delay Modulation (ms)", 0.0f, 10.0f, 1.0f));
-    params.add(std::make_unique<AudioParameterFloat>("delay_lfospeed", "Delay LFO Speed", 0.0f, 1.0f, 0.5f));
+    params.add(std::make_unique<AudioParameterFloat>("delay_lenght", "Delay Lenght (s)", 0.01f, 1.00f, 0.01f));
+    params.add(std::make_unique<AudioParameterFloat>("delay_modamount", "Delay Modulation (ms)", 0.0f, 1.0f, 0.10f));
+    params.add(std::make_unique<AudioParameterFloat>("delay_lfospeed", "LFO Speed", 0.0f, 20.0f, 0.5f));
     params.add(std::make_unique<AudioParameterFloat>("delay_feedback", "Delay Feedback Amount", 0.0f, 1.0f, 0.1f));
     params.add(std::make_unique<AudioParameterFloat>("delay_wetdry", "Delay Wet Dry Mix", 0.0f, 1.0f, 0.5f));
 
@@ -243,11 +243,11 @@ void AudiopluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
             float leftDelayInSamples = baseDelayInSeconds * samplerate + leftLfoOsc->getNextSample() * maxAmplitudeInSeconds * samplerate;
             float rightDelayInSamples = baseDelayInSeconds * samplerate + rightLfoOsc->getNextSample() * maxAmplitudeInSeconds * samplerate;
 
-            leftDelayLine->pushSample(leftSample + prevLeftDelayedSample * feedbackGain);
-            rightDelayLine->pushSample(rightSample + prevRightDelayedSample * feedbackGain);
-
             float leftWetSample = leftDelayLine->getDelayedSampleInterp(leftDelayInSamples);
             float rightWetSample = rightDelayLine->getDelayedSampleInterp(rightDelayInSamples);
+
+            leftDelayLine->pushSample(leftSample + rightWetSample * feedbackGain);
+            rightDelayLine->pushSample(rightSample + leftWetSample * feedbackGain);
 
             float leftDrySample = leftData[i];
             float rightDrySample = rightData[i];
