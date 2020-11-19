@@ -1,6 +1,8 @@
 #pragma once
 #include <JuceHeader.h>
-#include "EqualiserProcessor.h"
+#include "FilterBand.h"
+#include "PluginProcessor.h"
+#include "ProcessorBase.h"
 
 struct EqBandComponent : public Component
 {
@@ -18,10 +20,10 @@ struct EqBandComponent : public Component
     SliderParameterAttachment gainAttachment;
 };
 
-class Equaliser : public Component
+class Equaliser : public Component, public ProcessorBase
 {
 public:
-	Equaliser(EqualiserProcessor&);
+	Equaliser(AudiopluginAudioProcessor&);
     ~Equaliser() override;
     void paint(juce::Graphics& g) {
 
@@ -37,11 +39,13 @@ public:
         addAndMakeVisible(bandKnobs1);
         setSize(400, 300);
     }
+    //void prepareToPlay(double sampleRate, int samplesPerBlock);
+    void processBlock(AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages);
+    void pluginParameters(int index, float parameter);
 private:
-    EqualiserProcessor& audioProcessor;
+    AudiopluginAudioProcessor& audioProcessor;
     EqBandComponent bandKnobs0;
     EqBandComponent bandKnobs1;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Equaliser)
 };
-

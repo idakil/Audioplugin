@@ -41,6 +41,7 @@ private:
     AudiopluginAudioProcessor& audioProcessor;
     FlexBox flexBox;
 
+    Equaliser eq;
     //MainView view;
 
     juce::AudioProcessorValueTreeState& valueTreeState;

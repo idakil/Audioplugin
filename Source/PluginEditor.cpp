@@ -9,19 +9,19 @@
 #include "PluginEditor.h"
 //==============================================================================
 AudiopluginAudioProcessorEditor::AudiopluginAudioProcessorEditor (AudiopluginAudioProcessor& p, juce::AudioProcessorValueTreeState& vts)
-    : AudioProcessorEditor (&p), audioProcessor (p), valueTreeState(vts)
+    : AudioProcessorEditor (&p), audioProcessor (p), valueTreeState(vts), eq(p)
 {
-    addSlider("thresh", "Threshold", threshSlider, threshLabel, threshAttachment);
+    /*addSlider("thresh", "Threshold", threshSlider, threshLabel, threshAttachment);
     addSlider("ratio", "Ratio", slopeSlider, slopeLabel, slopeAttachment);
     addSlider("knee", "Knee", kneeSlider, kneeLabel, kneeAttachment);
     addSlider("attack", "Attack", attackSlider, attackLabel, attackAttachment);
-    addSlider("release", "Release", releaseSlider, releaseLabel, releaseAttachment);
+    addSlider("release", "Release", releaseSlider, releaseLabel, releaseAttachment);*/
  
     //addAndMakeVisible(bandKnobs0);
     //addAndMakeVisible(bandKnobs1);
     //flexBox.items.add(juce::FlexItem(bandKnobs0).withMinHeight(10.0f).withFlex(1));
     //flexBox.items.add(juce::FlexItem(bandKnobs1).withMinHeight(10.0f).withFlex(1));
-
+    addAndMakeVisible(eq);
     // Flexbox Style
     flexBox.flexDirection = juce::FlexBox::Direction::column;
     flexBox.justifyContent = juce::FlexBox::JustifyContent::center;

@@ -9,32 +9,8 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
-AudiopluginAudioProcessor::AudiopluginAudioProcessor()
-#ifndef JucePlugin_PreferredChannelConfigurations
-    : AudioProcessor(BusesProperties()
-#if ! JucePlugin_IsMidiEffect
-#if ! JucePlugin_IsSynth
-        .withInput("Input", juce::AudioChannelSet::stereo(), true)
-#endif
-        .withOutput("Output", juce::AudioChannelSet::stereo(), true)
-#endif
-    ),
-    mainProcessor(new juce::AudioProcessorGraph()),
-    muteInput(new juce::AudioParameterBool("mute", "Mute Input", true)),
-    parameters(*this, nullptr, Identifier("params"), createParameterLayout())
-#endif
-{
-    addParameter(muteInput);
-    /*addParameter(eqBypass);
-    addParameter(compProcessor);
-    addParameter(bcProcessor);
 
-    addParameter(eqBypass);
-    addParameter(compBypass);
-    addParameter(bcBypass);*/
-}
 
-/*
 //==============================================================================
 AudiopluginAudioProcessor::AudiopluginAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -51,11 +27,12 @@ AudiopluginAudioProcessor::AudiopluginAudioProcessor()
     , band1(*this, "Band 1", 4000,  1, samplerate)
     #endif
 {
-}*/
+}
 
 AudiopluginAudioProcessor::~AudiopluginAudioProcessor()
 {
 }
+
 
 
 juce::AudioProcessorValueTreeState::ParameterLayout AudiopluginAudioProcessor::createParameterLayout()
@@ -158,12 +135,6 @@ void AudiopluginAudioProcessor::changeProgramName (int index, const juce::String
 //==============================================================================
 void AudiopluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    mainProcessor->setPlayConfigDetails(getMainBusNumInputChannels(),
-        getMainBusNumOutputChannels(),
-        sampleRate, samplesPerBlock);
-
-    mainProcessor->prepareToPlay(sampleRate, samplesPerBlock);
-    updateGraph();
     /*
     // store this for later use
     this->samplerate = sampleRate;
@@ -271,6 +242,24 @@ void AudiopluginAudioProcessor::setStateInformation (const void* data, int sizeI
     if (xmlState.get() != nullptr)
         if (xmlState->hasTagName(parameters.state.getType()))
             parameters.replaceState(juce::ValueTree::fromXml(*xmlState));
+}
+
+bool AudiopluginAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) const
+{
+    // Accept mono-mono and stereo-stereo only
+    if (layouts.getMainInputChannelSet() == juce::AudioChannelSet::mono()
+        && layouts.getMainOutputChannelSet() == juce::AudioChannelSet::mono())
+    {
+        return true;
+    }
+    // Accept mono-mono and stereo-stereo only
+    if (layouts.getMainInputChannelSet() == juce::AudioChannelSet::stereo()
+        && layouts.getMainOutputChannelSet() == juce::AudioChannelSet::stereo())
+    {
+        return true;
+    }
+
+    return false;
 }
 
 //==============================================================================

@@ -21,9 +21,8 @@
 
 //[Headers]     -- You can add your own extra header files here --
 #include <JuceHeader.h>
-#include "Equaliser.h"
+#include "PluginProcessor.h"
 //[/Headers]
-
 
 
 //==============================================================================
@@ -50,7 +49,7 @@ public:
     void paint (juce::Graphics& g) override;
     void resized() override;
     void buttonClicked(juce::Button* buttonThatWasClicked) {
-        eq.showEqualiser();
+        //eq.showEqualiser();
     };
 
 
@@ -58,7 +57,7 @@ private:
     //[UserVariables]   -- You can add your own custom variables in this section.
     //[/UserVariables]
     //==============================================================================
-    Equaliser eq;
+    //Equaliser eq;
     std::unique_ptr<juce::TextButton> juce__textButton;
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainView)

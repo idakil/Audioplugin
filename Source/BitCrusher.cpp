@@ -2,7 +2,7 @@
 #pragma once
 #include "BitCrusher.h"
 
-BitCrusher::BitCrusher(BitCrusherProcessor& p)
+BitCrusher::BitCrusher(AudiopluginAudioProcessor& p)
     : AudioProcessorEditor(&p), processor(p)
 {
 

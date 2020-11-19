@@ -9,10 +9,7 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "Compressor.h"
-#include "BitCrusherProcessor.h"
-#include "EqualiserProcessor.h"
-#include "CompressorProcessor.h"
+#include "FilterBand.h"
 
 //==============================================================================
 /**
@@ -20,8 +17,6 @@
 class AudiopluginAudioProcessor  : public juce::AudioProcessor
 {
 public:
-    using AudioGraphIOProcessor = juce::AudioProcessorGraph::AudioGraphIOProcessor;
-    using Node = juce::AudioProcessorGraph::Node;
     //==============================================================================
     AudiopluginAudioProcessor();
     ~AudiopluginAudioProcessor() override;
@@ -30,18 +25,9 @@ public:
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;
 
-    bool isBusesLayoutSupported(const BusesLayout& layouts) const override
-    {
-        if (layouts.getMainInputChannelSet() == juce::AudioChannelSet::disabled()
-            || layouts.getMainOutputChannelSet() == juce::AudioChannelSet::disabled())
-            return false;
-
-        if (layouts.getMainOutputChannelSet() != juce::AudioChannelSet::mono()
-            && layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
-            return false;
-
-        return layouts.getMainInputChannelSet() == layouts.getMainOutputChannelSet();
-    }
+#ifndef JucePlugin_PreferredChannelConfigurations
+    bool isBusesLayoutSupported(const BusesLayout& layouts) const override;
+#endif
 
     void processBlock (juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
 
@@ -68,19 +54,9 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
-    //FilterBand band0;
-    //FilterBand band1;
-    Array<AudioProcessor*> processors;
+    FilterBand band0;
+    FilterBand band1;
 
-    void updateGraph() {
-        mainProcessor->addNode(std::make_unique<BitCrusherProcessor>());
-        mainProcessor->addNode(std::make_unique<EqualiserProcessor>());
-        mainProcessor->addNode(std::make_unique<CompressorProcessor>());
-        for (size_t i = 0; i < mainProcessor->getNumNodes(); i++)
-        {
-            processors.add(mainProcessor->getNode(i)->getProcessor());
-        }
-    };
 private:
     //==============================================================================
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
@@ -88,18 +64,7 @@ private:
     std::unique_ptr<juce::AudioProcessorGraph> mainProcessor;
     juce::AudioParameterBool* muteInput;
 
-    //juce::StringArray processorChoices{ "Empty", "EQ", "Comp", "BitCrusher" };
-
-    /*juce::AudioParameterChoice* eqProcessor;
-    juce::AudioParameterChoice* compProcessor;
-    juce::AudioParameterChoice* bcProcessor;
-
-    juce::AudioParameterBool* eqBypass;
-    juce::AudioParameterBool* compBypass;
-    juce::AudioParameterBool* bcBypass;
-    */
-
-    Array<Compressor> allCompressors;
+    //Array<Compressor> allCompressors;
     std::atomic<float>* threshParam, * slopeParam, * kneeParam, * attackParam, * releaseParam;
 
     double samplerate;
