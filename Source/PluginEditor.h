@@ -11,6 +11,8 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 #include "Equaliser.h"
+#include "Compressor.h"
+#include "BitCrusher.h"
 //#include "MainView.h"
 
 using namespace juce;
@@ -40,15 +42,16 @@ public:
 private:
     AudiopluginAudioProcessor& audioProcessor;
     FlexBox flexBox;
-
     Equaliser eq;
+    Compressor comp;
+    BitCrusher bitCrusher;
     //MainView view;
 
     juce::AudioProcessorValueTreeState& valueTreeState;
-
+    /*
     Slider threshSlider, slopeSlider, kneeSlider, attackSlider, releaseSlider;
     Label threshLabel, slopeLabel, kneeLabel, attackLabel, releaseLabel;
     std::unique_ptr<SliderAttachment> threshAttachment, slopeAttachment, kneeAttachment, attackAttachment, releaseAttachment;
-    
+    */
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudiopluginAudioProcessorEditor)
 };

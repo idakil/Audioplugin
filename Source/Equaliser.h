@@ -1,6 +1,5 @@
 #pragma once
 #include <JuceHeader.h>
-#include "FilterBand.h"
 #include "PluginProcessor.h"
 #include "ProcessorBase.h"
 
@@ -14,6 +13,7 @@ struct EqBandComponent : public Component
     Slider freqSlider;
     Slider qualSlider;
     Slider gainSlider;
+    Label freqLabel, qualLabel, gainLabel;
 
     SliderParameterAttachment freqAttachment;
     SliderParameterAttachment qualAttachment;

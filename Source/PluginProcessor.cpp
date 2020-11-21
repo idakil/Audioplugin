@@ -26,6 +26,7 @@ AudiopluginAudioProcessor::AudiopluginAudioProcessor()
     , band0(*this, "Band 0", 1000,  0, samplerate) // call the constructors of FilterBands on initialisation
     , band1(*this, "Band 1", 4000,  1, samplerate)
     #endif
+    , pi(*this)
 {
 }
 
@@ -154,7 +155,6 @@ void AudiopluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
 
 void AudiopluginAudioProcessor::releaseResources()
 {
-    mainProcessor->releaseResources();
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
 }
@@ -185,8 +185,6 @@ void AudiopluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, numSamples);
 
-
-    mainProcessor->processBlock(buffer, midiMessages);
     // This is the place where you'd normally do the guts of your plugin's
     // audio processing...
     // Make sure to reset the state if your inner loop is processing

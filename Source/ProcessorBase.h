@@ -3,21 +3,19 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 
-class ProcessorBase
+struct ProcessorBase
 {
-public:
     //==============================================================================
     ProcessorBase() {}
+    ~ProcessorBase() {};
 
     //==============================================================================
     void prepareToPlay(double, int)  {}
     void releaseResources()  {}
     void processBlock(juce::AudioSampleBuffer&, juce::MidiBuffer&) {}
 
-    void effectParameters() {
-    };
-private:
-    //==============================================================================
+    void effectParameters() {};
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ProcessorBase)
+    //==============================================================================
 };
+

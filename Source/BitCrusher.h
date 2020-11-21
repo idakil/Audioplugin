@@ -1,41 +1,49 @@
-/*
-  ==============================================================================
-
-    BitCrusher.h
-    Created: 13 Nov 2020 12:41:10pm
-    Author:  idakil
-
-  ==============================================================================
-*/
 
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "PluginProcessor.h"
+#include "ProcessorBase.h"
+#include "ParameterInterface.h"
 
+struct BitCrusherComponent : public Component {
+    BitCrusherComponent(ParameterInterface& pi);
+    ~BitCrusherComponent() {};
+
+    void paint(juce::Graphics& g) override;
+    void resized() override;
+
+    Slider bitReduxSlider, rateReduxSlider, noiseSlider;
+    SliderParameterAttachment bitReduxAttachment, rateReduxAttachment, noiseAttachment;
+
+};
 
 //==============================================================================
 /**
 */
-class BitCrusher : public AudioProcessorEditor, public Slider::Listener
+class BitCrusher : public Component, public ProcessorBase
 {
 public:
-    BitCrusher(AudiopluginAudioProcessor&);
+    BitCrusher(AudiopluginAudioProcessor& audioProcessor);
     ~BitCrusher();
 
+    void resized() {
+        auto bounds = getLocalBounds();
+        int h = bounds.getHeight() / 2;
+        bitCrusherComponent.setBounds(bounds.removeFromTop(h));
+        bitCrusherComponent.setBounds(bounds);
+    }
     //==============================================================================
-    void paint(Graphics&) override;
-    void resized() override;
 
-    Slider bitRedux, rateRedux, noise;
+    void effectParameters() {
+
+    };
 
 private:
 
-    void sliderValueChanged(Slider* slider) override;
-
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
-    AudiopluginAudioProcessor& processor;
+    AudiopluginAudioProcessor& audioProcessor;
+    BitCrusherComponent bitCrusherComponent;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BitCrusher)
 };

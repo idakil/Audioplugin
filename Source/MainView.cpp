@@ -26,7 +26,7 @@
 //[/MiscUserDefs]
 
 //==============================================================================
-MainView::MainView (AudiopluginAudioProcessor& p) : eq(p)
+MainView::MainView (AudiopluginAudioProcessor& p)
 {
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]

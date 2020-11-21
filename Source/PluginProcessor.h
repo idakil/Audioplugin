@@ -10,6 +10,7 @@
 
 #include <JuceHeader.h>
 #include "FilterBand.h"
+#include "ParameterInterface.h"
 
 //==============================================================================
 /**
@@ -57,15 +58,12 @@ public:
     FilterBand band0;
     FilterBand band1;
 
+    ParameterInterface pi;
+
 private:
     //==============================================================================
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
     juce::AudioProcessorValueTreeState parameters;
-    std::unique_ptr<juce::AudioProcessorGraph> mainProcessor;
-    juce::AudioParameterBool* muteInput;
-
-    //Array<Compressor> allCompressors;
-    std::atomic<float>* threshParam, * slopeParam, * kneeParam, * attackParam, * releaseParam;
 
     double samplerate;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudiopluginAudioProcessor)

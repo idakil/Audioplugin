@@ -9,6 +9,8 @@ EqBandComponent::EqBandComponent(FilterBand& band)
     , qualAttachment(*band.qualParam, qualSlider)
     , gainAttachment(*band.gainParam, gainSlider)
 {
+    freqLabel.setText("freq", dontSendNotification);
+    addAndMakeVisible(freqLabel);
     addAndMakeVisible(freqSlider);
     addAndMakeVisible(qualSlider);
     addAndMakeVisible(gainSlider);
@@ -16,6 +18,13 @@ EqBandComponent::EqBandComponent(FilterBand& band)
 
 void EqBandComponent::paint(juce::Graphics& g)
 {
+
+    int labelW = 100;
+    g.drawText("Freq", freqSlider.getX() + freqSlider.getWidth() / 2 - labelW / 2, 10, labelW, 20, Justification::centred);
+
+    g.drawText("qual", qualSlider.getX() + qualSlider.getWidth() / 2 - labelW / 2, 10, labelW, 20, Justification::centred);
+
+    g.drawText("gain", gainSlider.getX() + gainSlider.getWidth() / 2 - labelW / 2, 10, labelW, 20, Justification::centred);
 }
 
 void EqBandComponent::resized()

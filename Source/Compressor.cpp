@@ -1,18 +1,18 @@
-
+#pragma once
 #include "Compressor.h"
 
-CompressorComponent::CompressorComponent(HashMap<String, AudioParameterFloat> compParams)
+CompressorComponent::CompressorComponent(ParameterInterface& pi)
     : threshSlider(Slider::LinearVertical, Slider::TextBoxBelow)
     , slopeSlider(Slider::LinearVertical, Slider::TextBoxBelow)
     , kneeSlider(Slider::LinearVertical, Slider::TextBoxBelow)
     , attackSlider(Slider::LinearVertical, Slider::TextBoxBelow)
     , releaseSlider(Slider::LinearVertical, Slider::TextBoxBelow)
 
-    , threshAttachment(compParams.getReference("threshParam"), threshSlider)
-    , slopeAttachment(compParams.getReference("slopeParam"), slopeSlider)
-    , kneeAttachment(compParams.getReference("kneeParam"), kneeSlider)
-    , attackAttachment(compParams.getReference("attackParam"), attackSlider)
-    , releaseAttachment(compParams.getReference("releaseParam"), releaseSlider)
+    , threshAttachment(*pi.threshParam, threshSlider)
+    , slopeAttachment(*pi.slopeParam, slopeSlider)
+    , kneeAttachment(*pi.kneeParam, kneeSlider)
+    , attackAttachment(*pi.attackParam, attackSlider)
+    , releaseAttachment(*pi.releaseParam, releaseSlider)
 {
     addAndMakeVisible(threshSlider);
     addAndMakeVisible(slopeSlider);
@@ -21,11 +21,23 @@ CompressorComponent::CompressorComponent(HashMap<String, AudioParameterFloat> co
     addAndMakeVisible(releaseSlider);
 }
 
-void paint(juce::Graphics& g) {};
-void resized() {};
+void CompressorComponent::paint(juce::Graphics& g) {
+
+};
+void CompressorComponent::resized() {
+    auto bounds = getLocalBounds();
+    const int third = bounds.getWidth() / 3;
+
+    threshSlider.setBounds(bounds.removeFromLeft(third));
+    slopeSlider.setBounds(bounds.removeFromLeft(third));
+    kneeSlider.setBounds(bounds.removeFromLeft(third));
+    attackSlider.setBounds(bounds);
+    releaseSlider.setBounds(bounds);
+};
 
 Compressor::Compressor(AudiopluginAudioProcessor& p)
-    : audioProcessor(p), compressorComponent(compParams)
+    : audioProcessor(p)
+    , compressorComponent(p.pi)
 {
     tav = 0.01;
     rms = 0;
@@ -88,19 +100,16 @@ float Compressor::interpolatePoints(float* xPoints, float* yPoints, float detect
 }
 
 void Compressor::processBlock(AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages) {
-    float at = 1 - std::pow(MathConstants<float>::euler, ((1 / audioProcessor.getSampleRate()) * -2.2f) / (compParams.getReference("attackParam")->get() / 1000.0f));
-    float rt = 1 - std::pow(MathConstants<float>::euler, ((1 / audioProcessor.getSampleRate()) * -2.2f) / (compParams.getReference("releaseParam")->get() / 1000.0f));
+    float at = 1 - std::pow(MathConstants<float>::euler, ((1 / audioProcessor.getSampleRate()) * -2.2f) / (audioProcessor.pi.attackParam->get() / 1000.0f));
+    float rt = 1 - std::pow(MathConstants<float>::euler, ((1 / audioProcessor.getSampleRate()) * -2.2f) / (audioProcessor.pi.releaseParam->get() / 1000.0f));
 
     for (int i = 0; i < buffer.getNumSamples(); i++) {
         for (int channel = 0; channel < audioProcessor.getTotalNumOutputChannels(); channel++) {
             auto* data = buffer.getWritePointer(channel);
-            Compressor* comp = &allCompressors.getReference(channel);
-            data[i] = comp->compressSample(data[i], compParams.getReference("threshParam")->get(), compParams.getReference("slopeParam")->get(), at, rt, compParams.getReference("kneeParam")->get());
+            data[i] = compressSample(data[i], audioProcessor.pi.threshParam->get(), audioProcessor.pi.slopeParam->get(), at, rt, audioProcessor.pi.kneeParam->get());
         }
     }
 }
 void Compressor::prepareToPlay(double samplerate, int samplesPerBlock) {
-    for (int channel = 0; channel < audioProcessor.getNumOutputChannels(); channel++) {
-        allCompressors.add(Compressor(audioProcessor));
-    }
+
 };
