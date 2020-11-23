@@ -4,6 +4,15 @@
               addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1">
   <MAINGROUP id="TUW7kz" name="Audioplugin">
     <GROUP id="{0D976D99-0CB0-3FE0-034B-54280EB31E69}" name="Source">
+      <FILE id="zQcaST" name="DelayProcessor.cpp" compile="1" resource="0"
+            file="Source/DelayProcessor.cpp"/>
+      <FILE id="gW2xpY" name="DelayProcessor.h" compile="0" resource="0"
+            file="Source/DelayProcessor.h"/>
+      <FILE id="QCZcip" name="ProcessorBase.h" compile="0" resource="0" file="Source/ProcessorBase.h"/>
+      <FILE id="FN4ARV" name="ChorusProcessor.cpp" compile="1" resource="0"
+            file="Source/ChorusProcessor.cpp"/>
+      <FILE id="cpaxJL" name="ChorusProcessor.h" compile="0" resource="0"
+            file="Source/ChorusProcessor.h"/>
       <FILE id="EmnOwN" name="SineOscillator.cpp" compile="1" resource="0"
             file="Source/SineOscillator.cpp"/>
       <FILE id="M7Al3E" name="SineOscillator.h" compile="0" resource="0"

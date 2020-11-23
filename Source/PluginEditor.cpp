@@ -9,60 +9,89 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
+DelayComponent::DelayComponent(DelayProcessor& processor)
+    : delayLenghtSlider(Slider::RotaryVerticalDrag, Slider::TextBoxBelow)
+    , delayModulationSlider(Slider::RotaryVerticalDrag, Slider::TextBoxBelow)
+    , delayLfoSpeedSlider(Slider::RotaryVerticalDrag, Slider::TextBoxBelow)
+    , delayFeedbackSlider(Slider::RotaryVerticalDrag, Slider::TextBoxBelow)
+    , delayWetDryMixSlider(Slider::RotaryVerticalDrag, Slider::TextBoxBelow)
+    , delayLenghtAttachment(*processor.lenghtParam, delayLenghtSlider)
+    , delayModulationAttachment(*processor.modAmountParam, delayModulationSlider)
+    , delayLfoAttachment(*processor.lfoSpeedParam, delayLfoSpeedSlider)
+    , delayFeedbackAttachment(*processor.feedbackParam, delayFeedbackSlider)
+    , delayWetDryMixAttachment(*processor.wetDryMixParam, delayWetDryMixSlider)
+{
+    addAndMakeVisible(delayLenghtSlider);
+    addAndMakeVisible(delayModulationSlider);
+    addAndMakeVisible(delayLfoSpeedSlider);
+    addAndMakeVisible(delayFeedbackSlider);
+    addAndMakeVisible(delayWetDryMixSlider);
+
+    delayFlexBox.items.add(juce::FlexItem(delayLenghtSlider).withFlex(1));
+    delayFlexBox.items.add(juce::FlexItem(delayModulationSlider).withFlex(1));
+    delayFlexBox.items.add(juce::FlexItem(delayLfoSpeedSlider).withFlex(1));
+    delayFlexBox.items.add(juce::FlexItem(delayFeedbackSlider).withFlex(1));
+    delayFlexBox.items.add(juce::FlexItem(delayWetDryMixSlider).withFlex(1));
+}
+
+
+void DelayComponent::paint(juce::Graphics& g)
+{
+}
+
+void DelayComponent::resized()
+{
+    auto bounds = getLocalBounds();
+
+    delayFlexBox.performLayout(bounds);
+}
+
+
+ChorusComponent::ChorusComponent(ChorusProcessor& processor)
+    : chorusLenghtSlider(Slider::RotaryVerticalDrag, Slider::TextBoxBelow)
+    , chorusModulationSlider(Slider::RotaryVerticalDrag, Slider::TextBoxBelow)
+    , chorusLfoSpeedSlider(Slider::RotaryVerticalDrag, Slider::TextBoxBelow)
+    , chorusFeedbackSlider(Slider::RotaryVerticalDrag, Slider::TextBoxBelow)
+    , chorusWetDryMixSlider(Slider::RotaryVerticalDrag, Slider::TextBoxBelow)
+    , chorusLenghtAttachment(*processor.lenghtParam, chorusLenghtSlider)
+    , chorusModulationAttachment(*processor.modAmountParam , chorusModulationSlider)
+    , chorusLfoAttachment(*processor.lfoSpeedParam, chorusLfoSpeedSlider)
+    , chorusFeedbackAttachment(*processor.feedbackParam, chorusFeedbackSlider)
+    , chorusWetDryMixAttachment(*processor.wetDryMixParam, chorusWetDryMixSlider)
+{
+    addAndMakeVisible(chorusLenghtSlider);
+    addAndMakeVisible(chorusModulationSlider);
+    addAndMakeVisible(chorusLfoSpeedSlider);
+    addAndMakeVisible(chorusFeedbackSlider);
+    addAndMakeVisible(chorusWetDryMixSlider);
+
+    chorusFlexBox.items.add(juce::FlexItem(chorusLenghtSlider).withFlex(1));
+    chorusFlexBox.items.add(juce::FlexItem(chorusModulationSlider).withFlex(1));
+    chorusFlexBox.items.add(juce::FlexItem(chorusLfoSpeedSlider).withFlex(1));
+    chorusFlexBox.items.add(juce::FlexItem(chorusFeedbackSlider).withFlex(1));
+    chorusFlexBox.items.add(juce::FlexItem(chorusWetDryMixSlider).withFlex(1));
+}
+
+void ChorusComponent::paint(juce::Graphics& g)
+{
+}
+
+void ChorusComponent::resized()
+{
+    auto bounds = getLocalBounds();
+    
+    chorusFlexBox.performLayout(bounds);
+}
+
 //==============================================================================
 AudiopluginAudioProcessorEditor::AudiopluginAudioProcessorEditor (AudiopluginAudioProcessor& p, juce::AudioProcessorValueTreeState& vts)
-    : AudioProcessorEditor (&p), audioProcessor (p), valueTreeState(vts)
+    : AudioProcessorEditor (&p), audioProcessor (p), chorusKnobs(p.chorus), delayKnobs(p.delay)
 {
-    // Lenght
-    addAndMakeVisible(delayLenghtLabel);
-    delayLenghtLabel.setText("Delay Length", juce::dontSendNotification);
-    flexBox.items.add(juce::FlexItem(delayLenghtLabel).withMinHeight(10.0f).withFlex(1));
+    addAndMakeVisible(chorusKnobs);
+    flexBox.items.add(juce::FlexItem(chorusKnobs).withFlex(1));
 
-    addAndMakeVisible(delayLenghtSlider);
-    delayLenghtSlider.setSliderStyle(Slider::LinearBar);
-    delayLenghtAttachment.reset(new SliderAttachment(valueTreeState, "delay_lenght", delayLenghtSlider));
-    flexBox.items.add(juce::FlexItem(delayLenghtSlider).withMinHeight(33.0f).withFlex(1));
-
-    // Mod Amount
-    addAndMakeVisible(delayModAmountLabel);
-    delayModAmountLabel.setText("Delay Modulation (s)", juce::dontSendNotification);
-    flexBox.items.add(juce::FlexItem(delayModAmountLabel).withMinHeight(10.0f).withFlex(1));
-
-    delayModAmountSlider.setSliderStyle(Slider::LinearBar);
-    addAndMakeVisible(delayModAmountSlider);
-    delayModAmountAttachment.reset(new SliderAttachment(valueTreeState, "delay_modamount", delayModAmountSlider));
-    flexBox.items.add(juce::FlexItem(delayModAmountSlider).withMinHeight(33.0f).withFlex(1));
-
-    // LFO Speed
-    addAndMakeVisible(delayLfoSpeedLabel);
-    delayLfoSpeedLabel.setText("Delay LFO Speed (ms)", juce::dontSendNotification);
-    flexBox.items.add(juce::FlexItem(delayLfoSpeedLabel).withMinHeight(10.0f).withFlex(1));
-
-    delayLfoSpeedSlider.setSliderStyle(Slider::LinearBar);
-    addAndMakeVisible(delayLfoSpeedSlider);
-    delayLfoSpeedAttachment.reset(new SliderAttachment(valueTreeState, "delay_lfospeed", delayLfoSpeedSlider));
-    flexBox.items.add(juce::FlexItem(delayLfoSpeedSlider).withMinHeight(33.0f).withFlex(1));
-
-    // Feedback
-    addAndMakeVisible(delayFeedbackLabel);
-    delayFeedbackLabel.setText("Feedback", juce::dontSendNotification);
-    flexBox.items.add(juce::FlexItem(delayFeedbackLabel).withMinHeight(10.0f).withFlex(1));
-
-    delayFeedbackSlider.setSliderStyle(Slider::LinearBar);
-    addAndMakeVisible(delayFeedbackSlider);
-    delayFeedbackAttachment.reset(new SliderAttachment(valueTreeState, "delay_feedback", delayFeedbackSlider));
-    flexBox.items.add(juce::FlexItem(delayFeedbackSlider).withMinHeight(33.0f).withFlex(1));
-
-    // Wet / Dry
-    addAndMakeVisible(delaywetDryMixLabel);
-    delaywetDryMixLabel.setText("Wet / Dry", juce::dontSendNotification);
-    flexBox.items.add(juce::FlexItem(delaywetDryMixLabel).withMinHeight(10.0f).withFlex(1));
-
-    delaywetDryMixSlider.setSliderStyle(Slider::LinearBar);
-    addAndMakeVisible(delaywetDryMixSlider);
-    delaywetDryMixAttachment.reset(new SliderAttachment(valueTreeState, "delay_wetdry", delaywetDryMixSlider));
-    flexBox.items.add(juce::FlexItem(delaywetDryMixSlider).withMinHeight(33.0f).withFlex(1));
-
+    addAndMakeVisible(delayKnobs);
+    flexBox.items.add(juce::FlexItem(delayKnobs).withFlex(1));
     // Flexbox Style
     flexBox.flexDirection = juce::FlexBox::Direction::column;
     flexBox.justifyContent = juce::FlexBox::JustifyContent::center;

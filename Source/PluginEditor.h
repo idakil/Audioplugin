@@ -14,6 +14,49 @@
 //==============================================================================
 /**
 */
+
+struct DelayComponent : public Component {
+    DelayComponent(DelayProcessor& processor);
+
+    void paint(juce::Graphics& g) override;
+    void resized() override;
+
+    Slider delayLenghtSlider;
+    Slider delayModulationSlider;
+    Slider delayLfoSpeedSlider;
+    Slider delayFeedbackSlider;
+    Slider delayWetDryMixSlider;
+
+    SliderParameterAttachment delayLenghtAttachment;
+    SliderParameterAttachment delayModulationAttachment;
+    SliderParameterAttachment delayLfoAttachment;
+    SliderParameterAttachment delayFeedbackAttachment;
+    SliderParameterAttachment delayWetDryMixAttachment;
+
+    FlexBox delayFlexBox;
+};
+
+struct ChorusComponent : public Component {
+    
+    ChorusComponent(ChorusProcessor& processor);
+
+    void paint(juce::Graphics& g) override;
+    void resized() override;
+
+    Slider chorusLenghtSlider;
+    Slider chorusModulationSlider;
+    Slider chorusLfoSpeedSlider;
+    Slider chorusFeedbackSlider;
+    Slider chorusWetDryMixSlider;
+
+    SliderParameterAttachment chorusLenghtAttachment;
+    SliderParameterAttachment chorusModulationAttachment;
+    SliderParameterAttachment chorusLfoAttachment;
+    SliderParameterAttachment chorusFeedbackAttachment;
+    SliderParameterAttachment chorusWetDryMixAttachment;
+
+    FlexBox chorusFlexBox;
+};
 class AudiopluginAudioProcessorEditor  : public AudioProcessorEditor
 {
 public:
@@ -35,26 +78,10 @@ public:
 
 private:
     AudiopluginAudioProcessor& audioProcessor;
-    AudioProcessorValueTreeState& valueTreeState;
     FlexBox flexBox;
 
-    // Delay
-    Label delayLenghtLabel;
-    Slider delayLenghtSlider;
-    Label delayModAmountLabel;
-    Slider delayModAmountSlider;
-    Label delayLfoSpeedLabel;
-    Slider delayLfoSpeedSlider;
-    Label delayFeedbackLabel;
-    Slider delayFeedbackSlider;
-    Label delaywetDryMixLabel;
-    Slider delaywetDryMixSlider;
-    
-    std::unique_ptr<SliderAttachment> delayLenghtAttachment;
-    std::unique_ptr<SliderAttachment> delayModAmountAttachment;
-    std::unique_ptr<SliderAttachment> delayLfoSpeedAttachment;
-    std::unique_ptr<SliderAttachment> delayFeedbackAttachment;
-    std::unique_ptr<SliderAttachment> delaywetDryMixAttachment;
+    ChorusComponent chorusKnobs;
+    DelayComponent delayKnobs;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudiopluginAudioProcessorEditor)
 };

@@ -12,6 +12,9 @@
 #include "DelayLine.h"
 #include "SineOscillator.h"
 
+#include "ChorusProcessor.h"
+#include "DelayProcessor.h"
+
 //==============================================================================
 /**
 */
@@ -55,16 +58,13 @@ public:
     void getStateInformation(juce::MemoryBlock& destData) override;
     void setStateInformation(const void* data, int sizeInBytes) override;
 
+    ChorusProcessor chorus;
+    DelayProcessor delay;
+
 private:
     //==============================================================================
     AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
     AudioProcessorValueTreeState parameters;
-    // Delay
-    std::unique_ptr<DelayLine> leftDelayLine;
-    std::unique_ptr<DelayLine> rightDelayLine;
-
-    std::unique_ptr<SineOscillator> leftLfoOsc;
-    std::unique_ptr<SineOscillator> rightLfoOsc;
 
     std::atomic<float>* delayLenghtParam = nullptr;
     std::atomic<float>* delayModAmountParam = nullptr;
@@ -75,6 +75,8 @@ private:
     // member variables
     float prevLeftDelayedSample;
     float prevRightDelayedSample;
+
+    double samplerate;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudiopluginAudioProcessor);
