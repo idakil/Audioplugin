@@ -10,16 +10,52 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
-#include "Equaliser.h"
-#include "Compressor.h"
-#include "BitCrusher.h"
-//#include "MainView.h"
 
 using namespace juce;
 
 //==============================================================================
 /**
 */
+struct EqBandComponent : public Component
+{
+    EqBandComponent(Equaliser& eq);
+    void paint(juce::Graphics& g) override;
+    void resized() override;
+
+    Slider freqSlider;
+    Slider qualSlider;
+    Slider gainSlider;
+    SliderParameterAttachment freqAttachment;
+    SliderParameterAttachment qualAttachment;
+    SliderParameterAttachment gainAttachment;
+    FlexBox eqFlexBox;
+};
+
+struct CompressorComponent : public Component {
+
+    CompressorComponent(Compressor& comp);
+    ~CompressorComponent() {};
+
+    void paint(juce::Graphics& g) override;
+    void resized() override;
+
+    Slider threshSlider, slopeSlider, kneeSlider, attackSlider, releaseSlider;
+    Label threshLabel, slopeLabel, kneeLabel, attackLabel, releaseLabel;
+    SliderParameterAttachment threshAttachment, slopeAttachment, kneeAttachment, attackAttachment, releaseAttachment;
+    FlexBox compressorFlexBox;
+};
+
+struct BitCrusherComponent : public Component {
+    BitCrusherComponent(BitCrusher& bitCrusher);
+    ~BitCrusherComponent() {};
+
+    void paint(juce::Graphics& g) override;
+    void resized() override;
+
+    Slider bitReduxSlider, rateReduxSlider, noiseSlider;
+    SliderParameterAttachment bitReduxAttachment, rateReduxAttachment, noiseAttachment;
+    FlexBox bitCrusherFlexBox;
+};
 
 class AudiopluginAudioProcessorEditor  : public juce::AudioProcessorEditor
 {
@@ -37,21 +73,16 @@ public:
     //==============================================================================
     void paint (juce::Graphics&) override;
     void resized() override;
-    void addSlider(String name, String labelText, Slider& slider, Label& label, std::unique_ptr<SliderAttachment>& attachment);
 
 private:
     AudiopluginAudioProcessor& audioProcessor;
     FlexBox flexBox;
-    Equaliser eq;
-    Compressor comp;
-    BitCrusher bitCrusher;
-    //MainView view;
+    CompressorComponent compressorKnobs;
+    BitCrusherComponent bitCrusherKnobs;
+    EqBandComponent eqKnobs0;
+    EqBandComponent eqKnobs1;
 
     juce::AudioProcessorValueTreeState& valueTreeState;
-    /*
-    Slider threshSlider, slopeSlider, kneeSlider, attackSlider, releaseSlider;
-    Label threshLabel, slopeLabel, kneeLabel, attackLabel, releaseLabel;
-    std::unique_ptr<SliderAttachment> threshAttachment, slopeAttachment, kneeAttachment, attackAttachment, releaseAttachment;
-    */
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudiopluginAudioProcessorEditor)
 };

@@ -1,15 +1,6 @@
-/*
-  ==============================================================================
-
-    This file contains the basic framework code for a JUCE plugin processor.
-
-  ==============================================================================
-*/
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
-
-
 
 //==============================================================================
 AudiopluginAudioProcessor::AudiopluginAudioProcessor()
@@ -23,16 +14,18 @@ AudiopluginAudioProcessor::AudiopluginAudioProcessor()
 #endif
     )
     , parameters(*this, nullptr, Identifier("params"), createParameterLayout())
-    , band0(*this, "Band 0", 1000,  0, samplerate) // call the constructors of FilterBands on initialisation
-    , band1(*this, "Band 1", 4000,  1, samplerate)
+    , eq0(*this, "eq0", 0, samplerate) // call the constructors of FilterBands on initialisation
+    , eq1(*this, "eq1", 1, samplerate)
+    , compressor(*this, samplerate)
+    , bitCrusher(*this, samplerate)
     #endif
-    , pi(*this)
 {
 }
 
 AudiopluginAudioProcessor::~AudiopluginAudioProcessor()
 {
 }
+
 
 
 
@@ -136,21 +129,18 @@ void AudiopluginAudioProcessor::changeProgramName (int index, const juce::String
 //==============================================================================
 void AudiopluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    /*
-    // store this for later use
     this->samplerate = sampleRate;
     int numChannels = getTotalNumInputChannels();
-    band0.prepare(numChannels);
-    band1.prepare(numChannels);
 
+    eq0.prepare(numChannels);
+    eq1.prepare(numChannels);
+
+
+    /*
     for (int channel = 0; channel < getNumOutputChannels(); channel++) {
         allCompressors.add(Compressor());
-    }
-    threshParam = parameters.getRawParameterValue("thresh");
-    slopeParam = parameters.getRawParameterValue("ratio");
-    kneeParam = parameters.getRawParameterValue("knee");
-    attackParam = parameters.getRawParameterValue("attack");
-    releaseParam = parameters.getRawParameterValue("release");*/
+    }*/
+
 }
 
 void AudiopluginAudioProcessor::releaseResources()
@@ -159,38 +149,43 @@ void AudiopluginAudioProcessor::releaseResources()
     // spare memory, etc.
 }
 
-/*
-* void CompressorAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
-{
-    float at = 1 - std::pow(MathConstants<float>::euler, ((1 / getSampleRate()) * -2.2f) / (*attackParam / 1000.0f));
-    float rt = 1 - std::pow(MathConstants<float>::euler, ((1 / getSampleRate()) * -2.2f) / (*releaseParam / 1000.0f));
 
-    for (int i = 0; i < buffer.getNumSamples(); i++) {
-        for (int channel = 0; channel < getTotalNumOutputChannels(); channel++) {
-            auto* data = buffer.getWritePointer(channel);
-            Compressor* comp = &allCompressors.getReference(channel);
-            data[i] = comp->compressSample(data[i], *threshParam, *slopeParam, at, rt, *kneeParam);
-        }
-    }
-}
-*/
 void AudiopluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
-    const int numSamples = buffer.getNumSamples();
+    const int numSamplesInInput = buffer.getNumSamples();
     const int numChannels = buffer.getNumChannels();
 
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
-        buffer.clear (i, 0, numSamples);
+        buffer.clear (i, 0, numSamplesInInput);
+        
+    // Mono processing
+    if (totalNumInputChannels == 1 && totalNumOutputChannels == 1)
+    {
+    }
+    // Stereo processing
+    // This is essentially the mono version but doubled up for both channels
+    // We could generalise and refactor the processing to a separate function and call it for both channels as needed
+    // instead of copying the code like this.
+    else if (totalNumOutputChannels == 2)
+    {
 
-    // This is the place where you'd normally do the guts of your plugin's
-    // audio processing...
-    // Make sure to reset the state if your inner loop is processing
-    // the samples and the outer loop is handling the channels.
-    // Alternatively, you can process the samples with the channels
-    // interleaved by keeping the same state.
+        float* leftData = buffer.getWritePointer(0);
+        float* rightData = buffer.getWritePointer(1);
+
+        for (int i = 0; i < numSamplesInInput; i++)
+        {
+            //chorus.process(leftData[i], rightData[i]);
+            //delay.process(leftData[i], rightData[i]);
+            compressor.process(leftData[i], rightData[i]);
+            eq0.process(leftData[i], rightData[i]);
+            eq1.process(leftData[i], rightData[i]);
+            bitCrusher.process(leftData[i], rightData[i], numSamplesInInput);
+
+        }
+    }
     /*for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
         auto* channelData = buffer.getWritePointer (channel);

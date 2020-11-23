@@ -1,16 +1,10 @@
-/*
-  ==============================================================================
-
-    This file contains the basic framework code for a JUCE plugin processor.
-
-  ==============================================================================
-*/
 
 #pragma once
 
 #include <JuceHeader.h>
-#include "FilterBand.h"
-#include "ParameterInterface.h"
+#include "Equaliser.h"
+#include "Compressor.h"
+#include "BitCrusher.h"
 
 //==============================================================================
 /**
@@ -55,10 +49,10 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
-    FilterBand band0;
-    FilterBand band1;
-
-    ParameterInterface pi;
+    Compressor compressor;
+    BitCrusher bitCrusher;
+    Equaliser eq0;
+    Equaliser eq1;
 
 private:
     //==============================================================================

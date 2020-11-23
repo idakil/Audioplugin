@@ -1,7 +1,6 @@
 
 #pragma once
 #include <JuceHeader.h>
-#include "ProcessorBase.h"
 using namespace juce;
 
 /*
@@ -11,13 +10,48 @@ Attack: 0ms – 250ms (tai niin nopea kuin mahdollista)
 Release: 10 ms – 2500 ms
 */
 
-enum {
-    thresh,
-    slope,
-    knee,
-    attack,
-    release 
+struct Compressor : public AudioProcessorParameter::Listener {
+    template <class AudioProcessorType>
+    Compressor(AudioProcessorType& processor, double& fs) : samplerate(fs) {
+        threshParam = new AudioParameterFloat("th", "thht", -60, 0, 5);
+        slopeParam = new AudioParameterFloat("slooeParam", "slodpParam", 0, 1, 0.5);
+        kneeParam = new AudioParameterFloat("kneeParam", "kneeParam", 0, 1, 0.5);
+        attackParam = new AudioParameterFloat("attackParam", "attackParam", 0, 250, 0.5);
+        releaseParam = new AudioParameterFloat("releaseParam", "releaseParam", 10, 2500, 0.5);
+
+        processor.addParameter(threshParam);
+        processor.addParameter(slopeParam);
+        processor.addParameter(kneeParam);
+        processor.addParameter(attackParam);
+        processor.addParameter(releaseParam);
+
+        threshParam->addListener(this);
+        slopeParam->addListener(this);
+        kneeParam->addListener(this);
+        attackParam->addListener(this);
+        releaseParam->addListener(this);
+
+    }
+
+    Compressor() = delete;
+    void prepareToPlay(double sampleRate);
+    void process(float& leftSample, float& rightSample);
+
+    void parameterValueChanged(int /* parameterIndex */, float /* newValue */) override;
+    void parameterGestureChanged(int parameterIndex, bool gestureIsStarting) override {}
+
+    float compressSample(float data, float thresh, float ratio, float attack, float release, float knee);
+    float interpolatePoints(float* xPoints, float* yPoints, float detectedValue);
+
+    float tav=0.01, rms=0, gain=1;
+    AudioParameterFloat* threshParam, * slopeParam, * kneeParam, * attackParam, * releaseParam;
+    float thresh, slope, knee, attack, release;
+
+    double& samplerate;
+
 };
+
+/*
 
 struct CompressorComponent : public Component {
 
@@ -64,4 +98,4 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Compressor)
 
 };
-
+*/

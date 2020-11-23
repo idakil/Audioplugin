@@ -1,6 +1,6 @@
 #pragma once
 #include "Compressor.h"
-
+/*
 CompressorComponent::CompressorComponent(ParameterInterface& pi)
     : threshSlider(Slider::LinearVertical, Slider::TextBoxBelow)
     , slopeSlider(Slider::LinearVertical, Slider::TextBoxBelow)
@@ -22,17 +22,28 @@ CompressorComponent::CompressorComponent(ParameterInterface& pi)
 }
 
 void CompressorComponent::paint(juce::Graphics& g) {
+    g.fillAll(Colours::midnightblue.withMultipliedBrightness(.4));
+
+    g.setColour(Colours::beige);
+
+    int labelW = 100;
+    g.drawText("Thresh", threshSlider.getX() + threshSlider.getWidth() / 2 - labelW / 2, 10, labelW, 20, Justification::centred);
+    g.drawText("Slope", slopeSlider.getX() + slopeSlider.getWidth() / 2 - labelW / 2, 10, labelW, 20, Justification::centred);
+    g.drawText("Knee", kneeSlider.getX() + kneeSlider.getWidth() / 2 - labelW / 2, 10, labelW, 20, Justification::centred);
+    g.drawText("Attack", attackSlider.getX() + attackSlider.getWidth() / 2 - labelW / 2, 10, labelW, 20, Justification::centred);
+    g.drawText("Release", releaseSlider.getX() + releaseSlider.getWidth() / 2 - labelW / 2, 10, labelW, 20, Justification::centred);
 
 };
 void CompressorComponent::resized() {
-    auto bounds = getLocalBounds();
-    const int third = bounds.getWidth() / 3;
+    int margin = 10;
+    int w = 60;
+    int y = 50;
 
-    threshSlider.setBounds(bounds.removeFromLeft(third));
-    slopeSlider.setBounds(bounds.removeFromLeft(third));
-    kneeSlider.setBounds(bounds.removeFromLeft(third));
-    attackSlider.setBounds(bounds);
-    releaseSlider.setBounds(bounds);
+    threshSlider.setBounds(getWidth() / 4 - w / 2, y, w, getHeight() - y - margin);
+    slopeSlider.setBounds(2 * getWidth() / 4 - w / 2, y, w, getHeight() - y - margin);
+    kneeSlider.setBounds(3 * getWidth() / 4 - w / 2, y, w, getHeight() - y - margin);
+    attackSlider.setBounds(3 * getWidth() / 4 - w / 2, y, w, getHeight() - y - margin);
+    releaseSlider.setBounds(3 * getWidth() / 4 - w / 2, y, w, getHeight() - y - margin);
 };
 
 Compressor::Compressor(AudiopluginAudioProcessor& p)
@@ -46,7 +57,7 @@ Compressor::Compressor(AudiopluginAudioProcessor& p)
     addAndMakeVisible(compressorComponent);
     setSize(400, 300);
 }
-
+*/
 float Compressor::compressSample(float data, float thresh, float ratio, float attack, float release, float knee)
 {
     rms = (1 - tav) * rms + tav * std::pow(data, 2.0f);
@@ -99,17 +110,23 @@ float Compressor::interpolatePoints(float* xPoints, float* yPoints, float detect
 
 }
 
-void Compressor::processBlock(AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages) {
-    float at = 1 - std::pow(MathConstants<float>::euler, ((1 / audioProcessor.getSampleRate()) * -2.2f) / (audioProcessor.pi.attackParam->get() / 1000.0f));
-    float rt = 1 - std::pow(MathConstants<float>::euler, ((1 / audioProcessor.getSampleRate()) * -2.2f) / (audioProcessor.pi.releaseParam->get() / 1000.0f));
+void Compressor::process(float& leftSample, float& rightSample) {
+    float at = 1 - std::pow(MathConstants<float>::euler, ((1 / samplerate) * -2.2f) / (attack / 1000.0f));
+    float rt = 1 - std::pow(MathConstants<float>::euler, ((1 / samplerate) * -2.2f) / (release / 1000.0f));
 
-    for (int i = 0; i < buffer.getNumSamples(); i++) {
-        for (int channel = 0; channel < audioProcessor.getTotalNumOutputChannels(); channel++) {
-            auto* data = buffer.getWritePointer(channel);
-            data[i] = compressSample(data[i], audioProcessor.pi.threshParam->get(), audioProcessor.pi.slopeParam->get(), at, rt, audioProcessor.pi.kneeParam->get());
-        }
-    }
+    compressSample(leftSample, thresh, slope, at, rt, knee);
+    compressSample(rightSample,thresh, slope, at, rt, knee);
+
 }
-void Compressor::prepareToPlay(double samplerate, int samplesPerBlock) {
+void Compressor::prepareToPlay(double samplerate) {
 
 };
+
+void Compressor::parameterValueChanged(int, float)
+{
+    thresh = threshParam->get();
+    slope = slopeParam->get();
+    knee = kneeParam->get();
+    attack = attackParam->get();
+    release = releaseParam->get();
+}
