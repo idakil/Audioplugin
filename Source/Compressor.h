@@ -31,10 +31,11 @@ struct Compressor : public AudioProcessorParameter::Listener {
         attackParam->addListener(this);
         releaseParam->addListener(this);
 
+        allCompressors.add(this);
     }
 
     Compressor() = delete;
-    void prepareToPlay(double sampleRate);
+    void prepare(int numChannels);
     void process(float& leftSample, float& rightSample);
 
     void parameterValueChanged(int /* parameterIndex */, float /* newValue */) override;
@@ -46,8 +47,8 @@ struct Compressor : public AudioProcessorParameter::Listener {
     float tav=0.01, rms=0, gain=1;
     AudioParameterFloat* threshParam, * slopeParam, * kneeParam, * attackParam, * releaseParam;
     float thresh, slope, knee, attack, release;
-
     double& samplerate;
+    std::vector<Compressor> allCompressors;
 
 };
 

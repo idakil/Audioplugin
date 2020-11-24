@@ -72,8 +72,8 @@ void Equaliser::process(float& leftSample, float& rightSample){
             // There's an array of Biquad objects inside each band, with the name biquad.
             // A specific Biquad object per channel is then accessed with the [ch], and performFilter is called
             // It takes a sample as an input, and returns a sample, that we replace our "sample" with.
-   biquads[0].performFilter(leftSample);
-   biquads[1].performFilter(rightSample);
+   leftSample = biquads[0].performFilter(leftSample);
+   rightSample = biquads[1].performFilter(rightSample);
 
             // write back to io buffer
             //channelData[i] = sample;

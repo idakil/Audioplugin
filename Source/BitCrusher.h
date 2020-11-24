@@ -31,7 +31,7 @@ struct BitCrusher : public AudioProcessorParameter::Listener {
     }
 
     BitCrusher() = delete;
-    void process(float& leftSample, float& rightSample, const int& numSamples);
+    void process(float& leftSample, float& rightSample, juce::AudioBuffer<float>& buffer);
 
     void parameterValueChanged(int /* parameterIndex */, float /* newValue */) override;
     void parameterGestureChanged(int parameterIndex, bool gestureIsStarting) override {}

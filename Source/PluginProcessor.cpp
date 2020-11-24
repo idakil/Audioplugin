@@ -182,7 +182,7 @@ void AudiopluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
             compressor.process(leftData[i], rightData[i]);
             eq0.process(leftData[i], rightData[i]);
             eq1.process(leftData[i], rightData[i]);
-            bitCrusher.process(leftData[i], rightData[i], numSamplesInInput);
+            //bitCrusher.process(leftData[i], rightData[i], buffer);
 
         }
     }

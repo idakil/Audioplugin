@@ -105,21 +105,21 @@ float Compressor::interpolatePoints(float* xPoints, float* yPoints, float detect
         }
         result += term * yPoints[i];
     }
-
     return result;
-
 }
 
 void Compressor::process(float& leftSample, float& rightSample) {
     float at = 1 - std::pow(MathConstants<float>::euler, ((1 / samplerate) * -2.2f) / (attack / 1000.0f));
     float rt = 1 - std::pow(MathConstants<float>::euler, ((1 / samplerate) * -2.2f) / (release / 1000.0f));
 
-    compressSample(leftSample, thresh, slope, at, rt, knee);
-    compressSample(rightSample,thresh, slope, at, rt, knee);
-
+    leftSample = compressSample(leftSample, thresh, slope, at, rt, knee);
+    rightSample = compressSample(rightSample,thresh, slope, at, rt, knee);
 }
-void Compressor::prepareToPlay(double samplerate) {
+void Compressor::prepare(int numChannels) {
+    if (numChannels != allCompressors.size())
+        allCompressors.resize(numChannels);
 
+    parameterValueChanged(0, 0);
 };
 
 void Compressor::parameterValueChanged(int, float)

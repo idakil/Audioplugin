@@ -163,9 +163,9 @@ static Array<float> getWhiteNoise(int numSamples) {
 
 
 
-void BitCrusher::process(float& leftSample, float& rightSample, const int& numSamples) {
+void BitCrusher::process(float& leftSample, float& rightSample, juce::AudioBuffer<float>& buffer) {
         ScopedNoDenormals noDenormals;
-       // int numSamples = buffer.getNumSamples();
+       int numSamples = buffer.getNumSamples();
 
         float noiseAmt = -120 + 120 *(noise / 100); // dB
         float bitDepth = bitRedux;
@@ -176,9 +176,9 @@ void BitCrusher::process(float& leftSample, float& rightSample, const int& numSa
         noiseAmt = Decibels::decibelsToGain(noiseAmt);
 
         // COPY for processing ...
-        /*currentOutputBuffer.copyFrom(0, 0, buffer.getReadPointer(0), numSamples);
+        currentOutputBuffer.copyFrom(0, 0, buffer.getReadPointer(0), numSamples);
         if (buffer.getNumChannels() > 1) currentOutputBuffer.copyFrom(1, 0, buffer.getReadPointer(1), numSamples);
-        */
+        
         // BUILD NOISE ::::::
         {
             noiseBuffer.clear();
@@ -230,9 +230,8 @@ void BitCrusher::process(float& leftSample, float& rightSample, const int& numSa
         }
 
         // COPY to the actual output buffer :::
-        //buffer.copyFrom(0, 0, currentOutputBuffer, 0, 0, numSamples);
-        //buffer.copyFrom(1, 0, currentOutputBuffer, 1, 0, numSamples);
-
+        buffer.copyFrom(0, 0, currentOutputBuffer, 0, 0, numSamples);
+        buffer.copyFrom(1, 0, currentOutputBuffer, 1, 0, numSamples);
     };
 
 void BitCrusher::parameterValueChanged(int, float)
