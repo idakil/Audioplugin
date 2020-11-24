@@ -22,14 +22,10 @@ struct DelayComponent : public Component {
     void resized() override;
 
     Slider delayLenghtSlider;
-    Slider delayModulationSlider;
-    Slider delayLfoSpeedSlider;
     Slider delayFeedbackSlider;
     Slider delayWetDryMixSlider;
 
     SliderParameterAttachment delayLenghtAttachment;
-    SliderParameterAttachment delayModulationAttachment;
-    SliderParameterAttachment delayLfoAttachment;
     SliderParameterAttachment delayFeedbackAttachment;
     SliderParameterAttachment delayWetDryMixAttachment;
 
@@ -46,13 +42,11 @@ struct ChorusComponent : public Component {
     Slider chorusLenghtSlider;
     Slider chorusModulationSlider;
     Slider chorusLfoSpeedSlider;
-    Slider chorusFeedbackSlider;
     Slider chorusWetDryMixSlider;
 
     SliderParameterAttachment chorusLenghtAttachment;
     SliderParameterAttachment chorusModulationAttachment;
     SliderParameterAttachment chorusLfoAttachment;
-    SliderParameterAttachment chorusFeedbackAttachment;
     SliderParameterAttachment chorusWetDryMixAttachment;
 
     FlexBox chorusFlexBox;

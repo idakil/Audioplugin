@@ -111,6 +111,7 @@ void AudiopluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
     // store this for later use
     this->samplerate = sampleRate;
     chorus.prepareToPlay(sampleRate);
+    delay.prepareToPlay(sampleRate);
 }
 
 void AudiopluginAudioProcessor::releaseResources()
@@ -169,7 +170,7 @@ void AudiopluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
         for (int i = 0; i < numSamplesInInput; i++)
         {
             chorus.process(leftData[i], rightData[i]);
-            //delay.process(leftData[i], rightData[i]);
+            delay.process(leftData[i], rightData[i]);
         }
     }
 }

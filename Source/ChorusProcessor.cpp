@@ -10,17 +10,11 @@
 
 void ChorusProcessor::process(float& leftSample, float& rightSample)
 {
+    const float maxAmplitudeInSeconds = modulationAmount / 1000;
+    const float defaultFeedback = 0.1f;
 
-    const float delayLenght = lenghtParam->get();
-    const float modulation = modAmountParam->get();
-    const float wetDryRatio = wetDryMixParam->get();
-    const float feedbackGain = feedbackParam->get();
-    const float lfoFreqInSecs = lfoSpeedParam->get();
-
-    const float maxAmplitudeInSeconds = modulation / 1000;
-
-    leftLfoOsc->setFrequency(lfoFreqInSecs);
-    rightLfoOsc->setFrequency(lfoFreqInSecs);
+    leftLfoOsc->setFrequency(lfoSpeed);
+    rightLfoOsc->setFrequency(lfoSpeed);
 
     float leftDelayInSamples = delayLenght * samplerate + leftLfoOsc->getNextSample() * maxAmplitudeInSeconds * samplerate;
     float rightDelayInSamples = delayLenght * samplerate + rightLfoOsc->getNextSample() * maxAmplitudeInSeconds * samplerate;
@@ -28,14 +22,14 @@ void ChorusProcessor::process(float& leftSample, float& rightSample)
     float leftWetSample = leftDelayLine->getDelayedSampleInterp(leftDelayInSamples);
     float rightWetSample = rightDelayLine->getDelayedSampleInterp(rightDelayInSamples);
 
-    leftDelayLine->pushSample(leftSample + rightWetSample * feedbackGain);
-    rightDelayLine->pushSample(rightSample + leftWetSample * feedbackGain);
+    leftDelayLine->pushSample(leftSample + rightWetSample * defaultFeedback);
+    rightDelayLine->pushSample(rightSample + leftWetSample * defaultFeedback);
 
     float leftDrySample = leftSample;
     float rightDrySample = rightSample;
 
-    leftSample = wetDryRatio * leftWetSample + (1 - wetDryRatio) * leftDrySample;
-    rightSample = wetDryRatio * rightWetSample + (1 - wetDryRatio) * rightDrySample;
+    leftSample = wetDryMix * leftWetSample + (1 - wetDryMix) * leftDrySample;
+    rightSample = wetDryMix * rightWetSample + (1 - wetDryMix) * rightDrySample;
 
     prevLeftDelayedSample = leftWetSample;
     prevRightDelayedSample = rightWetSample;
@@ -69,7 +63,6 @@ void ChorusProcessor::parameterValueChanged(int, float)
     delayLenght = lenghtParam->get();
     modulationAmount = modAmountParam->get();
     wetDryMix = wetDryMixParam->get();
-    feedbackAmount = feedbackParam->get();
     lfoSpeed = lfoSpeedParam->get();
 }
 
