@@ -132,10 +132,10 @@ void AudiopluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
     this->samplerate = sampleRate;
     int numChannels = getTotalNumInputChannels();
 
-    eq0.prepare(numChannels);
-    eq1.prepare(numChannels);
-
-
+    //eq0.prepare(numChannels);
+    //eq1.prepare(numChannels);
+    compressor.prepare(samplesPerBlock);
+    bitCrusher.prepare();
     /*
     for (int channel = 0; channel < getNumOutputChannels(); channel++) {
         allCompressors.add(Compressor());
@@ -174,40 +174,17 @@ void AudiopluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
 
         float* leftData = buffer.getWritePointer(0);
         float* rightData = buffer.getWritePointer(1);
-
         for (int i = 0; i < numSamplesInInput; i++)
         {
             //chorus.process(leftData[i], rightData[i]);
             //delay.process(leftData[i], rightData[i]);
-            compressor.process(leftData[i], rightData[i]);
-            eq0.process(leftData[i], rightData[i]);
-            eq1.process(leftData[i], rightData[i]);
-            //bitCrusher.process(leftData[i], rightData[i], buffer);
+            //compressor.process(leftData[i], rightData[i]);
+            //eq0.process(leftData[i], rightData[i]);
+            //eq1.process(leftData[i], rightData[i]);
+            bitCrusher.process(leftData[i], rightData[i]);
 
         }
     }
-    /*for (int channel = 0; channel < totalNumInputChannels; ++channel)
-    {
-        auto* channelData = buffer.getWritePointer (channel);
-        for (int i = 0; i < numSamples; ++i)
-        {
-            // for easier reading, copy the sample from io buffer
-            // this should be optimised by the compiler
-            auto sample = channelData[i];
-
-            // Replace sample with all bands, all bands run in series
-            // There's an array of Biquad objects inside each band, with the name biquad.
-            // A specific Biquad object per channel is then accessed with the [ch], and performFilter is called
-            // It takes a sample as an input, and returns a sample, that we replace our "sample" with.
-            sample = band0.biquads[channel].performFilter(sample);
-            sample = band1.biquads[channel].performFilter(sample);
-
-            // write back to io buffer
-            channelData[i] = sample;
-        }
-        // ..do something to the data...
-        
-    }*/
 }
 
 //==============================================================================

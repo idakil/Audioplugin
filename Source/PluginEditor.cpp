@@ -42,9 +42,9 @@ void CompressorComponent::paint(juce::Graphics& g) {
 
 };
 void CompressorComponent::resized() {
-    int margin = 10;
+    int margin = 50;
     int w = 60;
-    int y = 50;
+    int y = 80;
     auto bounds = getLocalBounds();
     threshSlider.setBounds(getWidth() / 4 - w / 2, y, w, getHeight() - y - margin);
     slopeSlider.setBounds(2 * getWidth() / 4 - w / 2, y, w, getHeight() - y - margin);
@@ -79,8 +79,8 @@ void BitCrusherComponent::paint(Graphics& g)
     g.setColour(Colours::beige);
     int labelW = 100;
     g.drawText("Noise", noiseSlider.getX() + noiseSlider.getWidth() / 2 - labelW / 2, 10, labelW, 20, Justification::centred);
-    g.drawText("Bit", bitReduxSlider.getX() + bitReduxSlider.getWidth() / 2 - labelW / 2, 10, labelW, 20, Justification::centred);
-    g.drawText("Rate", rateReduxSlider.getX() + rateReduxSlider.getWidth() / 2 - labelW / 2, 10, labelW, 20, Justification::centred);
+    g.drawText("BitRedux", bitReduxSlider.getX() + bitReduxSlider.getWidth() / 2 - labelW / 2, 10, labelW, 20, Justification::centred);
+    g.drawText("RateRedux", rateReduxSlider.getX() + rateReduxSlider.getWidth() / 2 - labelW / 2, 10, labelW, 20, Justification::centred);
 }
 
 void BitCrusherComponent::resized()
@@ -160,7 +160,7 @@ AudiopluginAudioProcessorEditor::AudiopluginAudioProcessorEditor (AudiopluginAud
     // Flexbox Style
     flexBox.flexDirection = juce::FlexBox::Direction::column;
     flexBox.justifyContent = juce::FlexBox::JustifyContent::center;
-    setSize(800,800);
+    setSize(600,400);
 }
 
 AudiopluginAudioProcessorEditor::~AudiopluginAudioProcessorEditor()
