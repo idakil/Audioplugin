@@ -85,7 +85,6 @@ void BitCrusher::process(float& leftSample, float& rightSample) {
     noiseAmt = Decibels::decibelsToGain(noiseAmt);
 
     // BUILD NOISE ::::::
-    //noiseBuffer.clear();
     float whiteNoise = getWhiteNoise();
 
     // range bound

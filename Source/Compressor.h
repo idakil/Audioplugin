@@ -2,7 +2,7 @@
 #pragma once
 #include <JuceHeader.h>
 #include <cmath>
-
+#include <juce_dsp/juce_dsp.h>
 using namespace juce;
 
 /*
@@ -11,6 +11,7 @@ Ratio: 1:1 – 30:1
 Attack: 0ms – 250ms (tai niin nopea kuin mahdollista)
 Release: 10 ms – 2500 ms
 */
+
 /*
 class PeakLevelDetector {
 public:
@@ -49,8 +50,8 @@ class GainDynamics {
 public:
     // Times are in seconds (e.g. 100ms = 0.1f, 1.2s = 1.2f)
     GainDynamics::GainDynamics(float sampleRate, float newAttackTime, float newReleaseTime) {
-        attackTime = newAttackTime;
-        releaseTime = newReleaseTime;
+        attackTime = newAttackTime/1000.0f;
+        releaseTime = newReleaseTime/1000.0f;
         setDetector(sampleRate);
     }
     GainDynamics::~GainDynamics() {}
@@ -73,12 +74,12 @@ public:
     }
 
     void GainDynamics::setAttack(float newAttackTime) {
-        attackTime = newAttackTime;
+        attackTime = newAttackTime/1000.0f;
         b0Attack = 1. - expf(-1. / (attackTime * fs));;
     }
 
     void GainDynamics::setRelease(float newReleaseTime) {
-        releaseTime = newReleaseTime;
+        releaseTime = newReleaseTime/1000.0f;
         b0Release = 1. - expf(-1. / (releaseTime * fs));;
     }
 private:
@@ -88,28 +89,28 @@ private:
 };
 */
 
+
 struct Compressor : public AudioProcessorParameter::Listener {
     template <class AudioProcessorType>
-    Compressor(AudioProcessorType& processor, double& fs) : samplerate(fs) {
-        threshParam = new AudioParameterFloat("th", "thht", -60.0f, 0.0f, -0.0f);
-        slopeParam = new AudioParameterFloat("slooeParam", "slodpParam", 1.0f, 30.0f, 10.0f);
-        kneeParam = new AudioParameterFloat("kneeParam", "kneeParam", 0.0f, 1.0f, 0.5f);
-        attackParam = new AudioParameterFloat("attackParam", "attackParam", 0.0f, 250.0f, 100.0f);
-        releaseParam = new AudioParameterFloat("releaseParam", "releaseParam", 10.0f, 2500.0f, 15.0f);
+    Compressor(AudioProcessorType& processor, juce::String name, double& fs) : samplerate(fs) {
+        threshParam = new AudioParameterFloat(name + "th", name + "thht", -60.0f, 0.0f, -12.0f);
+        ratioParam = new AudioParameterFloat( name + "ratio_param", name + "ratio", 1.0f, 30.0f, 2.0f);
+        attackParam = new AudioParameterFloat(name + "attackParam", name + "attackParam", 0.01f, 250.0f, 10.0f);
+        releaseParam = new AudioParameterFloat(name + "releaseParam", name + "releaseParam", 10.0f, 2500.0f, 200.0f);
 
         processor.addParameter(threshParam);
-        processor.addParameter(slopeParam);
-        processor.addParameter(kneeParam);
+        processor.addParameter(ratioParam);
         processor.addParameter(attackParam);
         processor.addParameter(releaseParam);
 
         threshParam->addListener(this);
-        slopeParam->addListener(this);
-        kneeParam->addListener(this);
+        ratioParam->addListener(this);
         attackParam->addListener(this);
         releaseParam->addListener(this);
 
-
+        tav = 0.01f;
+        rms = 0.0f;
+        gain = 1.0f;
     }
 
     Compressor() = delete;
@@ -122,23 +123,25 @@ struct Compressor : public AudioProcessorParameter::Listener {
     float compressSample(float& data);
     float interpolatePoints(float* xPoints, float* yPoints, float detectedValue);
 
+    /*
     float dB(float x) { 
         return 20.0 * ((x) > 0.00001 ? log10(x) : -5.0);
     }
     float dB2mag(float x) { 
         return pow(10.0, (x) / 20.0);
-    }
+    }*/
 
 
     float tav, rms, gain;
-    AudioParameterFloat* threshParam, * slopeParam, * kneeParam, * attackParam, * releaseParam;
-    float thresh, slope, knee, attack, release;
+    AudioParameterFloat* threshParam, * ratioParam, * attackParam, * releaseParam;
+    float thresh, ratio, attack, release;
     double& samplerate;
-    std::vector<Compressor> allCompressors;
-    //float peakOutL, peakOutR, peakSum, peakSumDb;
-    //float gain, gainDb;
 
-    //ScopedPointer<PeakLevelDetector> leftLevelDetector, rightLevelDetector;
-    //ScopedPointer<GainDynamics> gainDymanics;
+    //Array<Compressor> allCompressors;
+
+    /*float gain, gainDb;
+    std::unique_ptr<PeakLevelDetector> leftLevelDetector, rightLevelDetector;
+    float peakOutL, peakOutR, peakSum, peakSumDb;
+    std::unique_ptr<GainDynamics> gainDymanics;*/
 };
 

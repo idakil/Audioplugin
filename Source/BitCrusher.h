@@ -17,9 +17,9 @@ struct BitCrusher : public AudioProcessorParameter::Listener {
     template <class AudioProcessorType>
     BitCrusher(AudioProcessorType& processor, double& fs) : samplerate(fs) {
 
-        bitReduxParam = new AudioParameterFloat("bitRedux", "bitRedux", 1, 40, 32);
-        rateReduxParam = new AudioParameterFloat("rateRedux", "rateRedux", 1, 50, 1);
-        noiseParam = new AudioParameterFloat("noise", "noise", 0, 100, 0);
+        bitReduxParam = new AudioParameterFloat("bitRedux", "bitRedux", 1.0f, 40.0f, 32.0f);
+        rateReduxParam = new AudioParameterFloat("rateRedux", "rateRedux", 1.0f, 40.0f, 1.0f);
+        noiseParam = new AudioParameterFloat("noise", "noise", 0.0f, 100.0f, 0.0f);
  
         processor.addParameter(bitReduxParam);
         processor.addParameter(rateReduxParam);
@@ -50,34 +50,3 @@ struct BitCrusher : public AudioProcessorParameter::Listener {
     float bitRedux, rateRedux, noise;
     double& samplerate;
 };
-
-//==============================================================================
-/**
-
-class BitCrusher : public Component, public ProcessorBase
-{
-public:
-    BitCrusher(AudiopluginAudioProcessor);
-    ~BitCrusher();
-
-    void resized() {
-        auto bounds = getLocalBounds();
-        int h = bounds.getHeight() / 2;
-        bitCrusherComponent.setBounds(bounds.removeFromTop(h));
-        bitCrusherComponent.setBounds(bounds);
-    }
-    //==============================================================================
-    void processBlock(AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages);
-    void effectParameters() {
-
-    };
-
-private:
-
-    // This reference is provided as a quick way for your editor to
-    // access the processor object that created it.
-    AudiopluginAudioProcessor& audioProcessor;
-    BitCrusherComponent bitCrusherComponent;
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BitCrusher)
-};
-*/

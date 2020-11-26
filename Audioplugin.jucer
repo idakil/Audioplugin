@@ -4,6 +4,7 @@
               addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1">
   <MAINGROUP id="TUW7kz" name="Audioplugin">
     <GROUP id="{0D976D99-0CB0-3FE0-034B-54280EB31E69}" name="Source">
+      <FILE id="Opl1Xj" name="MainView.h" compile="0" resource="0" file="Source/MainView.h"/>
       <GROUP id="{B7E3866F-9D0C-30CA-C499-3586E5B91E09}" name="BitCrusher">
         <FILE id="N7sTXZ" name="BitCrusher.cpp" compile="1" resource="0" file="Source/BitCrusher.cpp"/>
         <FILE id="mBvh6X" name="BitCrusher.h" compile="0" resource="0" file="Source/BitCrusher.h"/>
@@ -65,6 +66,6 @@
     <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
   </MODULES>
   <LIVE_SETTINGS>
-    <WINDOWS/>
+    <WINDOWS buildEnabled="0"/>
   </LIVE_SETTINGS>
 </JUCERPROJECT>

@@ -49,7 +49,9 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
-    Compressor compressor;
+    Compressor compressor0;
+    Compressor compressor1;
+
     BitCrusher bitCrusher;
     Equaliser eq0;
     Equaliser eq1;

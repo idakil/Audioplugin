@@ -16,7 +16,8 @@ AudiopluginAudioProcessor::AudiopluginAudioProcessor()
     , parameters(*this, nullptr, Identifier("params"), createParameterLayout())
     , eq0(*this, "eq0", 0, samplerate) // call the constructors of FilterBands on initialisation
     , eq1(*this, "eq1", 1, samplerate)
-    , compressor(*this, samplerate)
+    , compressor0(*this, "comp0", samplerate)
+    , compressor1(*this, "comp1", samplerate)
     , bitCrusher(*this, samplerate)
     #endif
 {
@@ -33,34 +34,6 @@ juce::AudioProcessorValueTreeState::ParameterLayout AudiopluginAudioProcessor::c
 {
     // Here we can programatically add parameters to the parameter layout.
     juce::AudioProcessorValueTreeState::ParameterLayout params;
-
-    // ID, name, min, max, default
-    params.add(std::make_unique<juce::AudioParameterFloat>("gain", "Gain Name", 0.0f, 1.0f, 0.5f));
-    params.add(std::make_unique<AudioParameterFloat>(
-        "thresh",
-        "Threshold",
-        NormalisableRange<float>(-60.0f, 20.0f, 0.01f),
-        10.0f));
-    params.add(std::make_unique<AudioParameterFloat>(
-        "ratio",
-        "Ratio",
-        NormalisableRange<float>(1.0f, 20.0f, 0.01f),
-        2.0f));
-    params.add(std::make_unique<AudioParameterFloat>(
-        "knee",
-        "KneeWidth",
-        NormalisableRange<float>(0.0f, 24.0f, 0.01f),
-        0.0f));
-    params.add(std::make_unique<AudioParameterFloat>(
-        "attack",
-        "Attack",
-        NormalisableRange<float>(0.01f, 500.0, 0.01f),
-        100.0f));
-    params.add(std::make_unique<AudioParameterFloat>(
-        "release",
-        "Release",
-        NormalisableRange<float>(0.01f, 2000.0f, 0.01f),
-        500.0f));
     return params;
 }
 
@@ -132,14 +105,11 @@ void AudiopluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
     this->samplerate = sampleRate;
     int numChannels = getTotalNumInputChannels();
 
-    //eq0.prepare(numChannels);
-    //eq1.prepare(numChannels);
-    compressor.prepare(samplesPerBlock);
+    eq0.prepare(numChannels);
+    eq1.prepare(numChannels);
+    compressor0.prepare(samplesPerBlock);
+    compressor1.prepare(samplesPerBlock);
     bitCrusher.prepare();
-    /*
-    for (int channel = 0; channel < getNumOutputChannels(); channel++) {
-        allCompressors.add(Compressor());
-    }*/
 
 }
 
@@ -178,9 +148,10 @@ void AudiopluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
         {
             //chorus.process(leftData[i], rightData[i]);
             //delay.process(leftData[i], rightData[i]);
-            //compressor.process(leftData[i], rightData[i]);
-            //eq0.process(leftData[i], rightData[i]);
-            //eq1.process(leftData[i], rightData[i]);
+            eq0.process(leftData[i], rightData[i]);
+            eq1.process(leftData[i], rightData[i]);
+            compressor0.process(leftData[i], rightData[i]);
+            compressor1.process(leftData[i], rightData[i]);
             bitCrusher.process(leftData[i], rightData[i]);
 
         }
