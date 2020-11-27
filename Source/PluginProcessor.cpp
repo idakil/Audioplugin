@@ -22,6 +22,7 @@ AudiopluginAudioProcessor::AudiopluginAudioProcessor()
         ), parameters(*this, nullptr, juce::Identifier("TESTI"), createParameterLayout())
          , chorus(*this, samplerate)
          , delay(*this, samplerate)
+         , distortion(*this, samplerate)
     #endif
 {
 
@@ -112,6 +113,7 @@ void AudiopluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
     this->samplerate = sampleRate;
     chorus.prepareToPlay(sampleRate);
     delay.prepareToPlay(sampleRate);
+    distortion.prepareToPlay(sampleRate, samplesPerBlock, getTotalNumInputChannels());
 }
 
 void AudiopluginAudioProcessor::releaseResources()
@@ -169,9 +171,11 @@ void AudiopluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
 
         for (int i = 0; i < numSamplesInInput; i++)
         {
-            chorus.process(leftData[i], rightData[i]);
-            delay.process(leftData[i], rightData[i]);
+            //chorus.process(leftData[i], rightData[i]);
+            //delay.process(leftData[i], rightData[i]);
         }
+
+        distortion.process(buffer);
     }
 }
 

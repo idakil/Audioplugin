@@ -4,6 +4,10 @@
               addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1">
   <MAINGROUP id="TUW7kz" name="Audioplugin">
     <GROUP id="{0D976D99-0CB0-3FE0-034B-54280EB31E69}" name="Source">
+      <FILE id="MSGvm2" name="DistortionProcessor.cpp" compile="1" resource="0"
+            file="Source/DistortionProcessor.cpp"/>
+      <FILE id="HVVtvs" name="DistortionProcessor.h" compile="0" resource="0"
+            file="Source/DistortionProcessor.h"/>
       <FILE id="zQcaST" name="DelayProcessor.cpp" compile="1" resource="0"
             file="Source/DelayProcessor.cpp"/>
       <FILE id="gW2xpY" name="DelayProcessor.h" compile="0" resource="0"
@@ -48,6 +52,7 @@
         <MODULEPATH id="juce_graphics" path="../../Users/setup/Downloads/juce-6.0.1-windows/JUCE/modules"/>
         <MODULEPATH id="juce_gui_basics" path="../../Users/setup/Downloads/juce-6.0.1-windows/JUCE/modules"/>
         <MODULEPATH id="juce_gui_extra" path="../../Users/setup/Downloads/juce-6.0.1-windows/JUCE/modules"/>
+        <MODULEPATH id="juce_dsp" path="../../Users/setup/Downloads/juce-6.0.1-windows/JUCE/modules"/>
       </MODULEPATHS>
     </VS2019>
   </EXPORTFORMATS>
@@ -61,6 +66,7 @@
     <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_dsp" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>

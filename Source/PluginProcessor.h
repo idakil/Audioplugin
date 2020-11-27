@@ -14,6 +14,7 @@
 
 #include "ChorusProcessor.h"
 #include "DelayProcessor.h"
+#include "DistortionProcessor.h"
 
 //==============================================================================
 /**
@@ -60,6 +61,7 @@ public:
 
     ChorusProcessor chorus;
     DelayProcessor delay;
+    DistortionProcessor distortion;
 
 private:
     //==============================================================================

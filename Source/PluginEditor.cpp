@@ -73,13 +73,17 @@ void ChorusComponent::resized()
 
 //==============================================================================
 AudiopluginAudioProcessorEditor::AudiopluginAudioProcessorEditor (AudiopluginAudioProcessor& p, juce::AudioProcessorValueTreeState& vts)
-    : AudioProcessorEditor (&p), audioProcessor (p), chorusKnobs(p.chorus), delayKnobs(p.delay)
+    : AudioProcessorEditor (&p), audioProcessor (p), chorusKnobs(p.chorus), delayKnobs(p.delay), distortionKnobs(p.distortion)
 {
     addAndMakeVisible(chorusKnobs);
     flexBox.items.add(juce::FlexItem(chorusKnobs).withFlex(1));
 
     addAndMakeVisible(delayKnobs);
     flexBox.items.add(juce::FlexItem(delayKnobs).withFlex(1));
+
+    addAndMakeVisible(distortionKnobs);
+    flexBox.items.add(juce::FlexItem(distortionKnobs).withFlex(1));
+
     // Flexbox Style
     flexBox.flexDirection = juce::FlexBox::Direction::column;
     flexBox.justifyContent = juce::FlexBox::JustifyContent::center;
@@ -100,4 +104,40 @@ void AudiopluginAudioProcessorEditor::paint (juce::Graphics& g)
 void AudiopluginAudioProcessorEditor::resized()
 {
     flexBox.performLayout(getLocalBounds().toFloat());
+}
+
+DistortionComponent::DistortionComponent(DistortionProcessor& processor)
+    : thresholdSlider(Slider::RotaryVerticalDrag, Slider::TextBoxBelow)
+    , ratioSlider(Slider::RotaryVerticalDrag, Slider::TextBoxBelow)
+    , attackSlider(Slider::RotaryVerticalDrag, Slider::TextBoxBelow)
+    , releaseSlider(Slider::RotaryVerticalDrag, Slider::TextBoxBelow)
+    , saturationSlider(Slider::RotaryVerticalDrag, Slider::TextBoxBelow)
+    , thresholdAttachment(*processor.thresholdParam, thresholdSlider)
+    , ratioAttachment(*processor.ratioParam, ratioSlider)
+    , attackAttachment(*processor.attackParam, attackSlider)
+    , releaseAttachment(*processor.releaseParam, releaseSlider)
+    , saturationAttachment(*processor.saturationParam, saturationSlider)
+{
+    addAndMakeVisible(thresholdSlider);
+    addAndMakeVisible(ratioSlider);
+    addAndMakeVisible(attackSlider);
+    addAndMakeVisible(releaseSlider);
+    addAndMakeVisible(saturationSlider);
+
+    distortionFlexBox.items.add(juce::FlexItem(thresholdSlider).withFlex(1));
+    distortionFlexBox.items.add(juce::FlexItem(ratioSlider).withFlex(1));
+    distortionFlexBox.items.add(juce::FlexItem(attackSlider).withFlex(1));
+    distortionFlexBox.items.add(juce::FlexItem(releaseSlider).withFlex(1));
+    distortionFlexBox.items.add(juce::FlexItem(saturationSlider).withFlex(1));
+}
+
+void DistortionComponent::paint(juce::Graphics& g)
+{
+}
+
+void DistortionComponent::resized()
+{
+    auto bounds = getLocalBounds();
+
+    distortionFlexBox.performLayout(bounds);
 }

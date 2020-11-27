@@ -15,6 +15,27 @@
 /**
 */
 
+struct DistortionComponent : public Component {
+    DistortionComponent(DistortionProcessor& processor);
+
+    void paint(juce::Graphics& g) override;
+    void resized() override;
+
+    Slider thresholdSlider;
+    Slider ratioSlider;
+    Slider attackSlider;
+    Slider releaseSlider;
+    Slider saturationSlider;
+
+    SliderParameterAttachment thresholdAttachment;
+    SliderParameterAttachment ratioAttachment;
+    SliderParameterAttachment attackAttachment;
+    SliderParameterAttachment releaseAttachment;
+    SliderParameterAttachment saturationAttachment;
+
+    FlexBox distortionFlexBox;
+};
+
 struct DelayComponent : public Component {
     DelayComponent(DelayProcessor& processor);
 
@@ -76,6 +97,7 @@ private:
 
     ChorusComponent chorusKnobs;
     DelayComponent delayKnobs;
+    DistortionComponent distortionKnobs;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudiopluginAudioProcessorEditor)
 };
