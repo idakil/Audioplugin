@@ -17,11 +17,13 @@ using namespace juce;
 enum MyEnum
 {
     windowWidth = 600,
-    windowHeight = 400
+    windowHeight = 600,
+    panelHeight = windowHeight - 30,
+    labelPosition = 15,
+    sliderHeightMargin = 80
 };
 //==============================================================================
-/**
-*/
+
 struct EqBandComponent : public Component
 {
     EqBandComponent(Equaliser& eq);
@@ -38,6 +40,29 @@ struct EqBandComponent : public Component
     TextButton header;
 };
 
+struct EqualiserContainer : public Component {
+    EqualiserContainer(Equaliser eq0, Equaliser eq1) :
+        eqBandKnobs0(eq0),
+        eqBandKnobs1(eq1)
+    {
+        addAndMakeVisible(eqBandKnobs0);
+        addAndMakeVisible(eqBandKnobs1);
+        eqContainerFlex.items.add(juce::FlexItem(eqBandKnobs0).withFlex(1));
+        eqContainerFlex.items.add(juce::FlexItem(eqBandKnobs1).withFlex(1));
+        setSize(windowWidth, panelHeight);
+        eqContainerFlex.flexDirection = juce::FlexBox::Direction::column;
+        eqContainerFlex.justifyContent = juce::FlexBox::JustifyContent::center;
+    }
+    void paint(juce::Graphics& g) override {
+    };
+    void resized() override {
+        eqContainerFlex.performLayout(getLocalBounds().toFloat());
+    };
+    EqBandComponent eqBandKnobs0, eqBandKnobs1;
+    FlexBox eqContainerFlex;
+};
+//==============================================================================
+
 struct CompressorComponent : public Component {
 
     CompressorComponent(Compressor& comp);
@@ -52,6 +77,29 @@ struct CompressorComponent : public Component {
     FlexBox compressorFlexBox;
 };
 
+struct CompressorContainer : public Component {
+    CompressorContainer(Compressor comp0, Compressor comp1) :
+        compressorKnobs0(comp0),
+        compressorKnobs1(comp1)
+    {
+        addAndMakeVisible(compressorKnobs0);
+        addAndMakeVisible(compressorKnobs1);
+        compContainerFlex.items.add(juce::FlexItem(compressorKnobs0).withFlex(1));
+        compContainerFlex.items.add(juce::FlexItem(compressorKnobs1).withFlex(1));
+        setSize(windowWidth, panelHeight);
+        compContainerFlex.flexDirection = juce::FlexBox::Direction::column;
+        compContainerFlex.justifyContent = juce::FlexBox::JustifyContent::center;
+    }
+    void paint(juce::Graphics& g) override {
+    };
+    void resized() override {
+        compContainerFlex.performLayout(getLocalBounds().toFloat());
+    };
+    FlexBox compContainerFlex;
+    CompressorComponent compressorKnobs0, compressorKnobs1;
+};
+//==============================================================================
+
 struct BitCrusherComponent : public Component {
     BitCrusherComponent(BitCrusher& bitCrusher);
     ~BitCrusherComponent() {};
@@ -63,6 +111,7 @@ struct BitCrusherComponent : public Component {
     SliderParameterAttachment bitReduxAttachment, rateReduxAttachment, noiseAttachment;
     FlexBox bitCrusherFlexBox;
 };
+//==============================================================================
 
 class ConcertinaHeader : public Component,
     public ChangeBroadcaster
@@ -72,7 +121,6 @@ public:
         : Component(n), name(n)
     {
         //panelIcon = Icon(iconPath, Colours::white);
-
         nameLabel.setText(name, dontSendNotification);
         nameLabel.setJustificationType(Justification::centredLeft);
         nameLabel.setInterceptsMouseClicks(false, false);
@@ -124,20 +172,13 @@ private:
 };
 
 struct EffectComponentContainer : public juce::Component, private ChangeListener {
-    EffectComponentContainer(AudiopluginAudioProcessor& p) :
-        compressorKnobs0(p.compressor0),
-        compressorKnobs1(p.compressor1),
-        eqKnobs0(p.eq0),
-        eqKnobs1(p.eq1),
-        bitCrusherKnobs(p.bitCrusher)
-    {
-
+    EffectComponentContainer(AudiopluginAudioProcessor& p) {
         for (auto i = concertinaPanel.getNumPanels() - 1; i >= 0; --i)
             concertinaPanel.removePanel(concertinaPanel.getPanel(i));
 
         headers.clear();
-        concertinaPanel.addPanel(0, new EqBandComponent(p.eq0), true);
-        concertinaPanel.addPanel(1, new CompressorComponent(p.compressor0), true);
+        concertinaPanel.addPanel(0, new EqualiserContainer(p.eq0, p.eq1), true);
+        concertinaPanel.addPanel(1, new CompressorContainer(p.compressor0, p.compressor1), true);
         concertinaPanel.addPanel(2, new BitCrusherComponent(p.bitCrusher), true);
 
         headers.add(new ConcertinaHeader("Equaliser"));
@@ -173,12 +214,13 @@ struct EffectComponentContainer : public juce::Component, private ChangeListener
 
         addAndMakeVisible(bitCrusherKnobs);
         flexBox.items.add(juce::FlexItem(bitCrusherKnobs).withMinHeight(10.0f).withFlex(1));*/
-        addAndMakeVisible(concertinaPanel);
-        flexBox.items.add(juce::FlexItem(concertinaPanel).withMinHeight(10.0f).withFlex(1));
 
-        flexBox.flexDirection = juce::FlexBox::Direction::column;
-        flexBox.justifyContent = juce::FlexBox::JustifyContent::center;
-        setSize(600, 400);
+        addAndMakeVisible(concertinaPanel);
+        //flexBox.items.add(juce::FlexItem(concertinaPanel).withMinHeight(10.0f).withFlex(1));
+
+        //flexBox.flexDirection = juce::FlexBox::Direction::column;
+        //flexBox.justifyContent = juce::FlexBox::JustifyContent::center;
+        concertinaPanel.setSize(windowWidth, panelHeight);
     }
 
     void changeListenerCallback(ChangeBroadcaster* source) override
@@ -198,42 +240,51 @@ struct EffectComponentContainer : public juce::Component, private ChangeListener
         flexBox.performLayout(getLocalBounds().toFloat());
     }
 
+    Viewport viewPort;
+
     FlexBox flexBox;
-    CompressorComponent compressorKnobs0;
-    CompressorComponent compressorKnobs1;
-    BitCrusherComponent bitCrusherKnobs;
-    EqBandComponent eqKnobs0;
-    EqBandComponent eqKnobs1;
 
     ConcertinaPanel concertinaPanel;
     OwnedArray<ConcertinaHeader> headers;
 };
+//==============================================================================
 
 struct MainView : public juce::Component {
     MainView(AudiopluginAudioProcessor& p) {
         //p.compressor0.thresh = 0.1f;
+        Logger::outputDebugString(std::to_string(p.compressor0.thresh));
 
         addAndMakeVisible(rect);
         addMouseListener(this, true);
-        setSize(600, 400);
+        setSize(windowWidth, panelHeight);
     }
     void resize() {
-        rect.setBounds(20, 20, 500, 300);
+        rect.setBounds(20, 20, windowWidth, panelHeight);
     }
     void paint(juce::Graphics& g)
     {
-        juce::Rectangle<float> area(10, 10, 400, 400);
-        juce::Parallelogram<float> p(area);
-        rect.setRectangle(p);
+        juce::Rectangle<float> area(0, 0, windowWidth, panelHeight);
+        //juce::Parallelogram<float> p(area);
+        //rect.setRectangle(p);
         g.setColour(juce::Colours::aqua);
+        g.fillRect(area);
+        setPoints(g);
+    }
+    void setPoints(juce::Graphics& g) {
+
     }
     void mouseDrag(const MouseEvent &event) {
-    
+        float midX = 300.0f/(event.getPosition().getX());
+        float midY = 200.0f / (event.getPosition().getY());
 
-        Logger::outputDebugString(std::to_string(event.getMouseDownX()));
+        p.compressor0.changeParams(midX, midY);
+        Logger::outputDebugString(std::to_string(p.compressor0.threshParam->get()));
+
     }
+    AudiopluginAudioProcessor p;
     DrawableRectangle rect;
 };
+//==============================================================================
 
 class AudiopluginAudioProcessorEditor  : public juce::AudioProcessorEditor
 {
@@ -243,7 +294,6 @@ public:
         marginTop = 80,
         gainLabelWidth = 80,
         gainSliderWidth = 300,
-        windowWidth = 400,
     };
 
     typedef juce::AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
@@ -259,7 +309,7 @@ private:
     EffectComponentContainer container;
     MainView main;
     std::unique_ptr<juce::TabbedComponent> tabbedComponent;
-    
+    std::unique_ptr<juce::TabbedButtonBar> buttonBar;
     juce::AudioProcessorValueTreeState& valueTreeState;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudiopluginAudioProcessorEditor)

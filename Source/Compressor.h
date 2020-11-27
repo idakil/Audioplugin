@@ -12,83 +12,6 @@ Attack: 0ms – 250ms (tai niin nopea kuin mahdollista)
 Release: 10 ms – 2500 ms
 */
 
-/*
-class PeakLevelDetector {
-public:
-    PeakLevelDetector::PeakLevelDetector(float sampleRate) {
-        setDetector(sampleRate);
-    }
-    PeakLevelDetector::~PeakLevelDetector() {}
-    float PeakLevelDetector::tick(float inputSample) {
-        inputAbs = std::abs(inputSample);
-
-        if (inputAbs > peakOutput) {
-            b0 = b0Attack;
-        }
-        else {
-            b0 = b0Release;
-        }
-        // Simplified filter equation (out = b0 * input + a1 * lastOut)
-        peakOutput += b0 * (inputAbs - peakOutput);
-        return peakOutput;
-    }
-    void PeakLevelDetector::setDetector(float sampleRate) {
-        fs = sampleRate;
-        peakOutput = 0.f;
-        // set coefficients for leaky integrator
-        b0Attack = 1.f;
-        a1 = expf(-1 / (releaseTime * fs));
-        b0Release = 1.f - a1;
-    }
-private:
-    float fs, inputAbs, peakOutput;
-    float b0Attack, b0Release, b0, a1;
-    float releaseTime = 0.100f;     // seconds
-};
-
-class GainDynamics {
-public:
-    // Times are in seconds (e.g. 100ms = 0.1f, 1.2s = 1.2f)
-    GainDynamics::GainDynamics(float sampleRate, float newAttackTime, float newReleaseTime) {
-        attackTime = newAttackTime/1000.0f;
-        releaseTime = newReleaseTime/1000.0f;
-        setDetector(sampleRate);
-    }
-    GainDynamics::~GainDynamics() {}
-    float GainDynamics::tick(float inputGain) {
-        if (inputGain < outputGain) {   // Isn't this suppose to be (input > lastOutput)?
-            b0 = b0Attack;
-        }
-        else {
-            b0 = b0Release;
-        }
-        // Simplified filter equation (out = b0 * input + a1 * lastOut)
-        outputGain += b0 * (inputGain - outputGain);
-        return outputGain;
-    }
-    void GainDynamics::setDetector(float sampleRate) {
-        fs = sampleRate;
-        outputGain = 0.f;
-        setAttack(attackTime);
-        setRelease(releaseTime);
-    }
-
-    void GainDynamics::setAttack(float newAttackTime) {
-        attackTime = newAttackTime/1000.0f;
-        b0Attack = 1. - expf(-1. / (attackTime * fs));;
-    }
-
-    void GainDynamics::setRelease(float newReleaseTime) {
-        releaseTime = newReleaseTime/1000.0f;
-        b0Release = 1. - expf(-1. / (releaseTime * fs));;
-    }
-private:
-    float fs, outputGain;
-    double b0Attack, b0Release, b0;
-    float attackTime, releaseTime;     // in seconds
-};
-*/
-
 
 struct Compressor : public AudioProcessorParameter::Listener {
     template <class AudioProcessorType>
@@ -113,6 +36,7 @@ struct Compressor : public AudioProcessorParameter::Listener {
         gain = 1.0f;
     }
 
+
     Compressor() = delete;
     void prepare(int samplesPerBlock);
     void process(float& leftSample, float& rightSample);
@@ -123,25 +47,26 @@ struct Compressor : public AudioProcessorParameter::Listener {
     float compressSample(float& data);
     float interpolatePoints(float* xPoints, float* yPoints, float detectedValue);
 
-    /*
-    float dB(float x) { 
-        return 20.0 * ((x) > 0.00001 ? log10(x) : -5.0);
+    void changeParams(float& distX, float& distY) {
+
+        Array<float> params = { thresh, ratio, attack, release };
+
+        for (int i = 0; i < params.size(); i++)
+        {
+            params.set(i, params[i]* ((distX+distY)*0.5));
+
+        };
+        
+        Logger::outputDebugString(std::to_string(thresh));
+
+
     }
-    float dB2mag(float x) { 
-        return pow(10.0, (x) / 20.0);
-    }*/
 
-
+    float prevX, prevY;
     float tav, rms, gain;
     AudioParameterFloat* threshParam, * ratioParam, * attackParam, * releaseParam;
     float thresh, ratio, attack, release;
     double& samplerate;
 
-    //Array<Compressor> allCompressors;
-
-    /*float gain, gainDb;
-    std::unique_ptr<PeakLevelDetector> leftLevelDetector, rightLevelDetector;
-    float peakOutL, peakOutR, peakSum, peakSumDb;
-    std::unique_ptr<GainDynamics> gainDymanics;*/
 };
 

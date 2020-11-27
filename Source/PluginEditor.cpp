@@ -12,6 +12,7 @@ CompressorComponent::CompressorComponent(Compressor& comp)
     , attackAttachment(*comp.attackParam, attackSlider)
     , releaseAttachment(*comp.releaseParam, releaseSlider)
 {
+
     addAndMakeVisible(threshSlider);
     addAndMakeVisible(slopeSlider);
     addAndMakeVisible(attackSlider);
@@ -29,22 +30,24 @@ void CompressorComponent::paint(juce::Graphics& g) {
     g.setColour(Colours::beige);
 
     int labelW = 100;
-    g.drawText("Thresh", threshSlider.getX() + threshSlider.getWidth() / 2 - labelW / 2, 10, labelW, 20, Justification::centred);
-    g.drawText("Slope", slopeSlider.getX() + slopeSlider.getWidth() / 2 - labelW / 2, 10, labelW, 20, Justification::centred);
-    g.drawText("Attack", attackSlider.getX() + attackSlider.getWidth() / 2 - labelW / 2, 10, labelW, 20, Justification::centred);
-    g.drawText("Release", releaseSlider.getX() + releaseSlider.getWidth() / 2 - labelW / 2, 10, labelW, 20, Justification::centred);
+    g.drawText("Thresh", threshSlider.getX() + threshSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, Justification::centred);
+    g.drawText("Slope", slopeSlider.getX() + slopeSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, Justification::centred);
+    g.drawText("Attack", attackSlider.getX() + attackSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, Justification::centred);
+    g.drawText("Release", releaseSlider.getX() + releaseSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, Justification::centred);
 };
 void CompressorComponent::resized() {
-    int margin = 50;
-    int w = 60;
+    int w = 100;
     int y = 80;
     auto bounds = getLocalBounds();
-    threshSlider.setBounds(getWidth() / 4 - w / 2, y, w, getHeight() - y - margin);
-    slopeSlider.setBounds(2 * getWidth() / 4 - w / 2, y, w, getHeight() - y - margin);
-    attackSlider.setBounds(3 * getWidth() / 4 - w / 2, y, w, getHeight() - y - margin);
-    releaseSlider.setBounds(3 * getWidth() / 4 - w / 2, y, w, getHeight() - y - margin);
-    //compressorFlexBox.performLayout(bounds);
+    threshSlider.setBounds(getWidth() / 5 - w/3 , y, w, getHeight() - sliderHeightMargin);
+    slopeSlider.setBounds(2 * getWidth() / 5 - w /3 , y, w, getHeight() - sliderHeightMargin);
+    attackSlider.setBounds(3 * getWidth() / 5 - w / 3 , y, w, getHeight() - sliderHeightMargin);
+    releaseSlider.setBounds(4 * getWidth() / 5 - w / 3 , y, w, getHeight() - sliderHeightMargin);
+
+  
+   //compressorFlexBox.performLayout(bounds);
 };
+//==============================================================================
 
 BitCrusherComponent::BitCrusherComponent(BitCrusher& bitCrusher)
     : bitReduxSlider(Slider::LinearVertical, Slider::TextBoxBelow)
@@ -70,24 +73,25 @@ void BitCrusherComponent::paint(Graphics& g)
     g.fillAll(Colours::midnightblue.withMultipliedBrightness(.4));
     g.setColour(Colours::beige);
     int labelW = 100;
-    g.drawText("Noise", noiseSlider.getX() + noiseSlider.getWidth() / 2 - labelW / 2, 10, labelW, 20, Justification::centred);
-    g.drawText("BitRedux", bitReduxSlider.getX() + bitReduxSlider.getWidth() / 2 - labelW / 2, 10, labelW, 20, Justification::centred);
-    g.drawText("RateRedux", rateReduxSlider.getX() + rateReduxSlider.getWidth() / 2 - labelW / 2, 10, labelW, 20, Justification::centred);
+    g.drawText("Noise", noiseSlider.getX() + noiseSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, Justification::centred);
+    g.drawText("BitRedux", bitReduxSlider.getX() + bitReduxSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, Justification::centred);
+    g.drawText("RateRedux", rateReduxSlider.getX() + rateReduxSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, Justification::centred);
 }
 
 void BitCrusherComponent::resized()
 {
-    int margin = 10;
     int w = 60;
     int y = 50;
-    noiseSlider.setBounds(getWidth() / 4 - w / 2, y, w, getHeight()/4);
-    bitReduxSlider.setBounds(2 * getWidth() / 4 - w / 2, y, w, getHeight()/4);
-    rateReduxSlider.setBounds(3 * getWidth() / 4 - w / 2, y, w, getHeight()/4);
+
+    noiseSlider.setBounds(getWidth() / 4 - w / 2, y, w, getHeight() - sliderHeightMargin);
+    bitReduxSlider.setBounds(2 * getWidth() / 4 - w / 2, y, w, getHeight() - sliderHeightMargin);
+    rateReduxSlider.setBounds(3 * getWidth() / 4 - w / 2, y, w, getHeight() - sliderHeightMargin);
     auto bounds = getLocalBounds();
 
     //bitCrusherFlexBox.performLayout(bounds);
 
 }
+//==============================================================================
 
 EqBandComponent::EqBandComponent(Equaliser& eq)
     : freqSlider(Slider::LinearVertical, Slider::TextBoxBelow)
@@ -111,7 +115,6 @@ EqBandComponent::EqBandComponent(Equaliser& eq)
     eqFlexBox.flexWrap = juce::FlexBox::Wrap::wrap;
     eqFlexBox.flexDirection = juce::FlexBox::Direction::row;
     eqFlexBox.justifyContent = juce::FlexBox::JustifyContent::center;
-
 }
 
 void EqBandComponent::paint(juce::Graphics& g)
@@ -119,24 +122,22 @@ void EqBandComponent::paint(juce::Graphics& g)
     g.fillAll(Colours::midnightblue.withMultipliedBrightness(.4));
     g.setColour(Colours::beige);
     int labelW = 100;
-    g.drawText("Freq", freqSlider.getX() + freqSlider.getWidth() / 2 - labelW / 2, 10, labelW, 20, Justification::centred);
-    g.drawText("qual", qualSlider.getX() + qualSlider.getWidth() / 2 - labelW / 2, 10, labelW, 20, Justification::centred);
-    g.drawText("gain", gainSlider.getX() + gainSlider.getWidth() / 2 - labelW / 2, 10, labelW, 20, Justification::centred);
+    g.drawText("Freq", freqSlider.getX() + freqSlider.getWidth() / 2 - labelW / 2, 40, labelW, 20, Justification::centred);
+    g.drawText("qual", qualSlider.getX() + qualSlider.getWidth() / 2 - labelW / 2, 40, labelW, 20, Justification::centred);
+    g.drawText("gain", gainSlider.getX() + gainSlider.getWidth() / 2 - labelW / 2, 40, labelW, 20, Justification::centred);
 }
 
 void EqBandComponent::resized()
 {
-    int margin = 10;
     int w = 60;
     int y = 50;
     auto bounds = getLocalBounds();
-
-    freqSlider.setBounds(getWidth() / 4 - w / 2, y, w, getHeight()/4);
-    qualSlider.setBounds(2 * getWidth() / 4 - w / 2, y, w, getHeight()/4);
-    gainSlider.setBounds(3 * getWidth() / 4 - w / 2, y, w, getHeight()/4);
+    freqSlider.setBounds(getWidth() / 4 - w / 2, y, w, getHeight() - sliderHeightMargin);
+    qualSlider.setBounds(2 * getWidth() / 4 - w / 2, y, w, getHeight() - sliderHeightMargin);
+    gainSlider.setBounds(3 * getWidth() / 4 - w / 2, y, w, getHeight() - sliderHeightMargin);
 
     auto headerFooterHeight = 25;
-    header.setBounds(0, 0, 400, headerFooterHeight);
+    header.setBounds(0, 0, windowWidth, headerFooterHeight);
 
     //eqFlexBox.performLayout(bounds);
 }
@@ -155,38 +156,14 @@ AudiopluginAudioProcessorEditor::AudiopluginAudioProcessorEditor (AudiopluginAud
     eqKnobs1(p.eq1), 
     bitCrusherKnobs(p.bitCrusher)*/
 {
-
     tabbedComponent.reset(new juce::TabbedComponent(juce::TabbedButtonBar::TabsAtTop));
     addAndMakeVisible(tabbedComponent.get());
-    tabbedComponent->setTabBarDepth(30);
-    tabbedComponent->addTab(TRANS("Perkelöidy"), juce::Colours::lightgrey, new MainView(p), false);
-    tabbedComponent->addTab(TRANS("Advanced"), juce::Colours::lightgrey, new EffectComponentContainer(p) , false);
+    tabbedComponent->setTabBarDepth(35);
+    tabbedComponent->addTab(TRANS("Perkelidy"), juce::Colour(0xffc483f2), new MainView(p), false);
+    tabbedComponent->addTab(TRANS("Advanced"), juce::Colour(0xffc483f2), new EffectComponentContainer(p) , false);
     tabbedComponent->setCurrentTabIndex(0);
 
     setSize(windowWidth, windowHeight);
-
-
-    /*
-    addAndMakeVisible(compressorKnobs0);
-    flexBox.items.add(juce::FlexItem(compressorKnobs0).withMinHeight(10.0f).withFlex(1));
-
-    addAndMakeVisible(compressorKnobs1);
-    flexBox.items.add(juce::FlexItem(compressorKnobs1).withMinHeight(10.0f).withFlex(1));
-
-    addAndMakeVisible(eqKnobs0);
-    flexBox.items.add(juce::FlexItem(eqKnobs0).withMinHeight(10.0f).withFlex(1));
-
-    addAndMakeVisible(eqKnobs1);
-    flexBox.items.add(juce::FlexItem(eqKnobs1).withMinHeight(10.0f).withFlex(1));
-
-    addAndMakeVisible(bitCrusherKnobs);
-    flexBox.items.add(juce::FlexItem(bitCrusherKnobs).withMinHeight(10.0f).withFlex(1));
-
-
-    // Flexbox Style
-    flexBox.flexDirection = juce::FlexBox::Direction::column;
-    flexBox.justifyContent = juce::FlexBox::JustifyContent::center;
-    setSize(1080,900);*/
 }
 
 AudiopluginAudioProcessorEditor::~AudiopluginAudioProcessorEditor()
@@ -196,13 +173,13 @@ AudiopluginAudioProcessorEditor::~AudiopluginAudioProcessorEditor()
 //==============================================================================
 void AudiopluginAudioProcessorEditor::paint (juce::Graphics& g)
 {
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
+    //g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
+    g.fillAll(juce::Colour(0xffc8a1e3));
 }
 
 void AudiopluginAudioProcessorEditor::resized()
 {
-    tabbedComponent->setBounds(0, 0, 600, 400);
-
+    tabbedComponent->setBounds(0, 0, windowWidth, windowHeight);
     //flexBox.performLayout(getLocalBounds().toFloat());
 
 }
