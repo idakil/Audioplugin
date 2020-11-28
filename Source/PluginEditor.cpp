@@ -13,22 +13,34 @@ DistortionComponent::DistortionComponent(DistortionProcessor& processor)
     , releaseAttachment(*processor.releaseParam, releaseSlider)
     , saturationAttachment(*processor.saturationParam, saturationSlider)
 {
+
+    const juce::FlexItem::Margin margin = juce::FlexItem::Margin(25.0f, 0.0f, 20.0f, 0.0f);
+
     addAndMakeVisible(thresholdSlider);
     addAndMakeVisible(ratioSlider);
     addAndMakeVisible(attackSlider);
     addAndMakeVisible(releaseSlider);
     addAndMakeVisible(saturationSlider);
 
-    distortionFlexBox.items.add(juce::FlexItem(thresholdSlider).withFlex(1));
-    distortionFlexBox.items.add(juce::FlexItem(ratioSlider).withFlex(1));
-    distortionFlexBox.items.add(juce::FlexItem(attackSlider).withFlex(1));
-    distortionFlexBox.items.add(juce::FlexItem(releaseSlider).withFlex(1));
-    distortionFlexBox.items.add(juce::FlexItem(saturationSlider).withFlex(1));
+    distortionFlexBox.items.add(juce::FlexItem(thresholdSlider).withFlex(1).withMargin(margin));
+    distortionFlexBox.items.add(juce::FlexItem(ratioSlider).withFlex(1).withMargin(margin));
+    distortionFlexBox.items.add(juce::FlexItem(attackSlider).withFlex(1).withMargin(margin));
+    distortionFlexBox.items.add(juce::FlexItem(releaseSlider).withFlex(1).withMargin(margin));
+    distortionFlexBox.items.add(juce::FlexItem(saturationSlider).withFlex(1).withMargin(margin));
 }
 
 void DistortionComponent::paint(juce::Graphics& g)
 {
     g.fillAll(Colours::midnightblue.withMultipliedBrightness(.4));
+
+    g.setColour(Colours::beige);
+
+    int labelW = 100;
+    g.drawText("Threshold", thresholdSlider.getX() + thresholdSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, Justification::centred);
+    g.drawText("Ratio??", ratioSlider.getX() + ratioSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, Justification::centred);
+    g.drawText("Attack", attackSlider.getX() + attackSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, Justification::centred);
+    g.drawText("Release", releaseSlider.getX() + releaseSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, Justification::centred);
+    g.drawText("Saturation", saturationSlider.getX() + saturationSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, Justification::centred);
 }
 
 void DistortionComponent::resized()
@@ -48,20 +60,30 @@ ChorusComponent::ChorusComponent(ChorusProcessor& processor)
     , chorusLfoAttachment(*processor.lfoSpeedParam, chorusLfoSpeedSlider)
     , chorusWetDryMixAttachment(*processor.wetDryMixParam, chorusWetDryMixSlider)
 {
+    const juce::FlexItem::Margin margin = juce::FlexItem::Margin(25.0f, 0.0f, 15.0f, 0.0f);
+
     addAndMakeVisible(chorusLenghtSlider);
     addAndMakeVisible(chorusModulationSlider);
     addAndMakeVisible(chorusLfoSpeedSlider);
     addAndMakeVisible(chorusWetDryMixSlider);
 
-    chorusFlexBox.items.add(juce::FlexItem(chorusLenghtSlider).withFlex(1));
-    chorusFlexBox.items.add(juce::FlexItem(chorusModulationSlider).withFlex(1));
-    chorusFlexBox.items.add(juce::FlexItem(chorusLfoSpeedSlider).withFlex(1));
-    chorusFlexBox.items.add(juce::FlexItem(chorusWetDryMixSlider).withFlex(1));
+    chorusFlexBox.items.add(juce::FlexItem(chorusLenghtSlider).withFlex(1).withMargin(margin));
+    chorusFlexBox.items.add(juce::FlexItem(chorusModulationSlider).withFlex(1).withMargin(margin));
+    chorusFlexBox.items.add(juce::FlexItem(chorusLfoSpeedSlider).withFlex(1).withMargin(margin));
+    chorusFlexBox.items.add(juce::FlexItem(chorusWetDryMixSlider).withFlex(1).withMargin(margin));
 }
 
 void ChorusComponent::paint(juce::Graphics& g)
 {
     g.fillAll(Colours::midnightblue.withMultipliedBrightness(.4));
+
+    g.setColour(Colours::beige);
+
+    int labelW = 100;
+    g.drawText("Delay lenght", chorusLenghtSlider.getX() + chorusLenghtSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, Justification::centred);
+    g.drawText("Modulation", chorusModulationSlider.getX() + chorusModulationSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, Justification::centred);
+    g.drawText("LFO speed", chorusLfoSpeedSlider.getX() + chorusLfoSpeedSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, Justification::centred);
+    g.drawText("Wet / Dry", chorusWetDryMixSlider.getX() + chorusWetDryMixSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, Justification::centred);
 }
 
 void ChorusComponent::resized()
@@ -80,19 +102,29 @@ DelayComponent::DelayComponent(DelayProcessor& processor)
     , delayFeedbackAttachment(*processor.feedbackParam, delayFeedbackSlider)
     , delayWetDryMixAttachment(*processor.wetDryMixParam, delayWetDryMixSlider)
 {
+
+    const juce::FlexItem::Margin margin = juce::FlexItem::Margin(25.0f, 0.0f, 15.0f, 0.0f);
+    
     addAndMakeVisible(delayLenghtSlider);
     addAndMakeVisible(delayFeedbackSlider);
     addAndMakeVisible(delayWetDryMixSlider);
 
-    delayFlexBox.items.add(juce::FlexItem(delayLenghtSlider).withFlex(1));
-    delayFlexBox.items.add(juce::FlexItem(delayFeedbackSlider).withFlex(1));
-    delayFlexBox.items.add(juce::FlexItem(delayWetDryMixSlider).withFlex(1));
+    delayFlexBox.items.add(juce::FlexItem(delayLenghtSlider).withFlex(1).withMargin(margin));
+    delayFlexBox.items.add(juce::FlexItem(delayFeedbackSlider).withFlex(1).withMargin(margin));
+    delayFlexBox.items.add(juce::FlexItem(delayWetDryMixSlider).withFlex(1).withMargin(margin));
 }
 
 
 void DelayComponent::paint(juce::Graphics& g)
 {
     g.fillAll(Colours::midnightblue.withMultipliedBrightness(.4));
+
+    g.setColour(Colours::beige);
+
+    int labelW = 100;
+    g.drawText("Thresh", delayLenghtSlider.getX() + delayLenghtSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, Justification::centred);
+    g.drawText("Slope", delayFeedbackSlider.getX() + delayFeedbackSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, Justification::centred);
+    g.drawText("Attack", delayWetDryMixSlider.getX() + delayWetDryMixSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, Justification::centred);
 }
 
 void DelayComponent::resized()
