@@ -1,25 +1,18 @@
-/*
-  ==============================================================================
-
-    This file contains the basic framework code for a JUCE plugin processor.
-
-  ==============================================================================
-*/
 
 #pragma once
 
 #include <JuceHeader.h>
-#include "DelayLine.h"
-#include "SineOscillator.h"
-
+#include "Equaliser.h"
+#include "Compressor.h"
+#include "BitCrusher.h"
 #include "ChorusProcessor.h"
-#include "DelayProcessor.h"
 #include "DistortionProcessor.h"
+#include "DelayProcessor.h"
 
 //==============================================================================
 /**
 */
-class AudiopluginAudioProcessor : public juce::AudioProcessor
+class AudiopluginAudioProcessor  : public juce::AudioProcessor
 {
 public:
     //==============================================================================
@@ -27,14 +20,14 @@ public:
     ~AudiopluginAudioProcessor() override;
 
     //==============================================================================
-    void prepareToPlay(double sampleRate, int samplesPerBlock) override;
+    void prepareToPlay (double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;
 
 #ifndef JucePlugin_PreferredChannelConfigurations
     bool isBusesLayoutSupported(const BusesLayout& layouts) const override;
 #endif
 
-    void processBlock(juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
+    void processBlock (juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
 
     //==============================================================================
     juce::AudioProcessorEditor* createEditor() override;
@@ -51,13 +44,20 @@ public:
     //==============================================================================
     int getNumPrograms() override;
     int getCurrentProgram() override;
-    void setCurrentProgram(int index) override;
-    const juce::String getProgramName(int index) override;
-    void changeProgramName(int index, const juce::String& newName) override;
+    void setCurrentProgram (int index) override;
+    const juce::String getProgramName (int index) override;
+    void changeProgramName (int index, const juce::String& newName) override;
 
     //==============================================================================
-    void getStateInformation(juce::MemoryBlock& destData) override;
-    void setStateInformation(const void* data, int sizeInBytes) override;
+    void getStateInformation (juce::MemoryBlock& destData) override;
+    void setStateInformation (const void* data, int sizeInBytes) override;
+
+    Compressor compressor0;
+    Compressor compressor1;
+
+    BitCrusher bitCrusher;
+    Equaliser eq0;
+    Equaliser eq1;
 
     ChorusProcessor chorus;
     DelayProcessor delay;
@@ -65,21 +65,9 @@ public:
 
 private:
     //==============================================================================
-    AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
-    AudioProcessorValueTreeState parameters;
-
-    std::atomic<float>* delayLenghtParam = nullptr;
-    std::atomic<float>* delayModAmountParam = nullptr;
-    std::atomic<float>* delayLfoSpeedParam = nullptr;
-    std::atomic<float>* delayFeedbackParam = nullptr;
-    std::atomic<float>* delaywetDryMixParam = nullptr;
-
-    // member variables
-    float prevLeftDelayedSample;
-    float prevRightDelayedSample;
+    juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
+    juce::AudioProcessorValueTreeState parameters;
 
     double samplerate;
-
-    //==============================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudiopluginAudioProcessor);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudiopluginAudioProcessor)
 };

@@ -4,6 +4,14 @@
               addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1">
   <MAINGROUP id="TUW7kz" name="Audioplugin">
     <GROUP id="{0D976D99-0CB0-3FE0-034B-54280EB31E69}" name="Source">
+      <FILE id="OYwfam" name="biquad.hpp" compile="0" resource="0" file="Source/biquad.hpp"/>
+      <FILE id="XNrAyN" name="BitCrusher.cpp" compile="1" resource="0" file="Source/BitCrusher.cpp"/>
+      <FILE id="WiGZoz" name="BitCrusher.h" compile="0" resource="0" file="Source/BitCrusher.h"/>
+      <FILE id="yCGjTW" name="Compressor.cpp" compile="1" resource="0" file="Source/Compressor.cpp"/>
+      <FILE id="FsZsVL" name="Compressor.h" compile="0" resource="0" file="Source/Compressor.h"/>
+      <FILE id="dnnkLr" name="Equaliser.cpp" compile="1" resource="0" file="Source/Equaliser.cpp"/>
+      <FILE id="VYcR9A" name="Equaliser.h" compile="0" resource="0" file="Source/Equaliser.h"/>
+      <FILE id="blSyNt" name="MainView.h" compile="0" resource="0" file="Source/MainView.h"/>
       <FILE id="MSGvm2" name="DistortionProcessor.cpp" compile="1" resource="0"
             file="Source/DistortionProcessor.cpp"/>
       <FILE id="HVVtvs" name="DistortionProcessor.h" compile="0" resource="0"
@@ -12,7 +20,6 @@
             file="Source/DelayProcessor.cpp"/>
       <FILE id="gW2xpY" name="DelayProcessor.h" compile="0" resource="0"
             file="Source/DelayProcessor.h"/>
-      <FILE id="QCZcip" name="ProcessorBase.h" compile="0" resource="0" file="Source/ProcessorBase.h"/>
       <FILE id="FN4ARV" name="ChorusProcessor.cpp" compile="1" resource="0"
             file="Source/ChorusProcessor.cpp"/>
       <FILE id="cpaxJL" name="ChorusProcessor.h" compile="0" resource="0"

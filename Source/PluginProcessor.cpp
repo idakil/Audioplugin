@@ -1,51 +1,47 @@
-/*
-  ==============================================================================
-
-    This file contains the basic framework code for a JUCE plugin processor.
-
-  ==============================================================================
-*/
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
 //==============================================================================
 AudiopluginAudioProcessor::AudiopluginAudioProcessor()
-     #ifndef JucePlugin_PreferredChannelConfigurations
-     : AudioProcessor(BusesProperties()
-            #if ! JucePlugin_IsMidiEffect
-                #if ! JucePlugin_IsSynth
-                .withInput("Input", juce::AudioChannelSet::stereo(), true)
-                #endif
-            .withOutput("Output", juce::AudioChannelSet::stereo(), true)
-            #endif
-        ), parameters(*this, nullptr, juce::Identifier("TESTI"), createParameterLayout())
-         , chorus(*this, samplerate)
-         , delay(*this, samplerate)
-         , distortion(*this, samplerate)
+#ifndef JucePlugin_PreferredChannelConfigurations
+    : AudioProcessor(BusesProperties()
+#if ! JucePlugin_IsMidiEffect
+#if ! JucePlugin_IsSynth
+        .withInput("Input", juce::AudioChannelSet::stereo(), true)
+#endif
+        .withOutput("Output", juce::AudioChannelSet::stereo(), true)
+#endif
+    )
+    , parameters(*this, nullptr, Identifier("params"), createParameterLayout())
+    , eq0(*this, "eq0", 0, samplerate) // call the constructors of FilterBands on initialisation
+    , eq1(*this, "eq1", 1, samplerate)
+    , compressor0(*this, "comp0", samplerate)
+    , compressor1(*this, "comp1", samplerate)
+    , bitCrusher(*this, samplerate)
+    , chorus(*this, samplerate)
+    , delay(*this, samplerate)
+    , distortion(*this, samplerate)
     #endif
 {
-
 }
 
 AudiopluginAudioProcessor::~AudiopluginAudioProcessor()
 {
 }
 
-AudioProcessorValueTreeState::ParameterLayout AudiopluginAudioProcessor::createParameterLayout()
+
+
+
+juce::AudioProcessorValueTreeState::ParameterLayout AudiopluginAudioProcessor::createParameterLayout()
 {
     // Here we can programatically add parameters to the parameter layout.
-    AudioProcessorValueTreeState::ParameterLayout params;
-
-    // Delay 
-    // ID, name, min, max, default
-
-
+    juce::AudioProcessorValueTreeState::ParameterLayout params;
     return params;
 }
 
 //==============================================================================
-const String AudiopluginAudioProcessor::getName() const
+const juce::String AudiopluginAudioProcessor::getName() const
 {
     return JucePlugin_Name;
 }
@@ -109,8 +105,15 @@ void AudiopluginAudioProcessor::changeProgramName (int index, const juce::String
 //==============================================================================
 void AudiopluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    // store this for later use
     this->samplerate = sampleRate;
+    int numChannels = getTotalNumInputChannels();
+
+    eq0.prepare(numChannels);
+    eq1.prepare(numChannels);
+    compressor0.prepare(samplesPerBlock);
+    compressor1.prepare(samplesPerBlock);
+    bitCrusher.prepare();
+
     chorus.prepareToPlay(sampleRate);
     delay.prepareToPlay(sampleRate);
     distortion.prepareToPlay(sampleRate, samplesPerBlock, getTotalNumInputChannels());
@@ -122,38 +125,18 @@ void AudiopluginAudioProcessor::releaseResources()
     // spare memory, etc.
 }
 
-#ifndef JucePlugin_PreferredChannelConfigurations
-bool AudiopluginAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
-{
-  #if JucePlugin_IsMidiEffect
-    juce::ignoreUnused (layouts);
-    return true;
-  #else
-    // This is the place where you check if the layout is supported.
-    // In this template code we only support mono or stereo.
-    if (layouts.getMainOutputChannelSet() != juce::AudioChannelSet::mono()
-     && layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
-        return false;
-
-    // This checks if the input layout matches the output layout
-   #if ! JucePlugin_IsSynth
-    if (layouts.getMainOutputChannelSet() != layouts.getMainInputChannelSet())
-        return false;
-   #endif
-
-    return true;
-  #endif
-}
-#endif
 
 void AudiopluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
-
     const int numSamplesInInput = buffer.getNumSamples();
+    const int numChannels = buffer.getNumChannels();
 
+    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
+        buffer.clear (i, 0, numSamplesInInput);
+        
     // Mono processing
     if (totalNumInputChannels == 1 && totalNumOutputChannels == 1)
     {
@@ -167,14 +150,16 @@ void AudiopluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
 
         float* leftData = buffer.getWritePointer(0);
         float* rightData = buffer.getWritePointer(1);
-
-
         for (int i = 0; i < numSamplesInInput; i++)
         {
-            //chorus.process(leftData[i], rightData[i]);
-            //delay.process(leftData[i], rightData[i]);
+            eq0.process(leftData[i], rightData[i]);
+            eq1.process(leftData[i], rightData[i]);
+            compressor0.process(leftData[i], rightData[i]);
+            compressor1.process(leftData[i], rightData[i]);
+            bitCrusher.process(leftData[i], rightData[i]);
+            chorus.process(leftData[i], rightData[i]);
+            delay.process(leftData[i], rightData[i]);
         }
-
         distortion.process(buffer);
     }
 }
@@ -204,6 +189,24 @@ void AudiopluginAudioProcessor::setStateInformation (const void* data, int sizeI
     if (xmlState.get() != nullptr)
         if (xmlState->hasTagName(parameters.state.getType()))
             parameters.replaceState(juce::ValueTree::fromXml(*xmlState));
+}
+
+bool AudiopluginAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) const
+{
+    // Accept mono-mono and stereo-stereo only
+    if (layouts.getMainInputChannelSet() == juce::AudioChannelSet::mono()
+        && layouts.getMainOutputChannelSet() == juce::AudioChannelSet::mono())
+    {
+        return true;
+    }
+    // Accept mono-mono and stereo-stereo only
+    if (layouts.getMainInputChannelSet() == juce::AudioChannelSet::stereo()
+        && layouts.getMainOutputChannelSet() == juce::AudioChannelSet::stereo())
+    {
+        return true;
+    }
+
+    return false;
 }
 
 //==============================================================================
