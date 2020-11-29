@@ -62,6 +62,7 @@ void Compressor::process(float& leftSample, float& rightSample) {
 }
 
 void Compressor::prepare(int numChannels) {
+    parameterValueChanged(NULL, NULL);
 }
 
 void Compressor::parameterValueChanged(int, float)

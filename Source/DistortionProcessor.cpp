@@ -20,6 +20,8 @@ void DistortionProcessor::prepareToPlay(double samplerate, int samplesPerBlock, 
     {
         return std::tanh(x);
     };
+
+    parameterValueChanged(NULL, NULL);
 }
 
 void DistortionProcessor::process(juce::AudioBuffer<float>& buffer)
