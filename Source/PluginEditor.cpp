@@ -292,8 +292,8 @@ AudiopluginAudioProcessorEditor::AudiopluginAudioProcessorEditor (AudiopluginAud
     tabbedComponent.reset(new juce::TabbedComponent(juce::TabbedButtonBar::TabsAtTop));
     addAndMakeVisible(tabbedComponent.get());
     tabbedComponent->setTabBarDepth(35);
-    tabbedComponent->addTab(TRANS("Perkelidy"), juce::Colour(0xffc483f2), new MainView(p), false);
-    tabbedComponent->addTab(TRANS("Advanced"), juce::Colour(0xffc483f2), new EffectComponentContainer(p) , false);
+    tabbedComponent->addTab(TRANS("Perkelidy"), juce::Colour(0xffc483f2), &main, false);
+    tabbedComponent->addTab(TRANS("Advanced"), juce::Colour(0xffc483f2), &container, false);
     tabbedComponent->setCurrentTabIndex(0);
 
     setSize(windowWidth, windowHeight);

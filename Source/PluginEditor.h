@@ -313,38 +313,57 @@ struct EffectComponentContainer : public juce::Component, private ChangeListener
 };
 //==============================================================================
 
-struct MainView : public juce::Component {
+struct MainView : public juce::AnimatedAppComponent {
+
     MainView(AudiopluginAudioProcessor& p) {
         //p.compressor0.thresh = 0.1f;
         Logger::outputDebugString(std::to_string(p.compressor0.thresh));
 
+        setFramesPerSecond(60);
         addAndMakeVisible(rect);
         addMouseListener(this, true);
         setSize(windowWidth, panelHeight);
     }
+
     void resize() {
         rect.setBounds(20, 20, windowWidth, panelHeight);
     }
-    void paint(juce::Graphics& g)
+
+    void update() override
+    {
+
+    }
+
+    void paint(juce::Graphics& g) override
     {
         juce::Rectangle<float> area(0, 0, windowWidth, panelHeight);
+
         //juce::Parallelogram<float> p(area);
         //rect.setRectangle(p);
         g.setColour(juce::Colours::aqua);
         g.fillRect(area);
-        setPoints(g);
+
+        int radius = 150;
+
+        juce::Point<float> p(getWidth() / 2.0f + 1.0f * radius, getHeight() / 2.0f + 1.0f * radius);
+
+        g.setColour(juce::Colours::deeppink);
+        g.drawEllipse(p.x, p.y, 30.0f, 30.0f, 5.0f);
     }
-    void setPoints(juce::Graphics& g) {
+
+    void resized() override
+    {
 
     }
-    void mouseDrag(const MouseEvent &event) {
-        float midX = 300.0f/(event.getPosition().getX());
+
+    void mouseDrag(const MouseEvent& event) {
+        float midX = 300.0f / (event.getPosition().getX());
         float midY = 200.0f / (event.getPosition().getY());
 
         p.compressor0.changeParams(midX, midY);
         Logger::outputDebugString(std::to_string(p.compressor0.threshParam->get()));
-
     }
+
     AudiopluginAudioProcessor p;
     DrawableRectangle rect;
 };
