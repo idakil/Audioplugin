@@ -108,6 +108,9 @@ DelayComponent::DelayComponent(DelayProcessor& processor)
     addAndMakeVisible(delayFeedbackSlider);
     addAndMakeVisible(delayWetDryMixSlider);
 
+    delayLenghtSlider.setTextValueSuffix(" ms");
+    delayFeedbackSlider.setTextValueSuffix(" ms");
+
     delayFlexBox.items.add(juce::FlexItem(delayLenghtSlider).withFlex(1).withMargin(margin));
     delayFlexBox.items.add(juce::FlexItem(delayFeedbackSlider).withFlex(1).withMargin(margin));
     delayFlexBox.items.add(juce::FlexItem(delayWetDryMixSlider).withFlex(1).withMargin(margin));
@@ -120,9 +123,9 @@ void DelayComponent::paint(juce::Graphics& g)
     g.setColour(juce::Colours::beige);
 
     int labelW = 100;
-    g.drawText("Thresh", delayLenghtSlider.getX() + delayLenghtSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, juce::Justification::centred);
-    g.drawText("Slope", delayFeedbackSlider.getX() + delayFeedbackSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, juce::Justification::centred);
-    g.drawText("Attack", delayWetDryMixSlider.getX() + delayWetDryMixSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, juce::Justification::centred);
+    g.drawText("Delay lenght", delayLenghtSlider.getX() + delayLenghtSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, juce::Justification::centred);
+    g.drawText("Feedback", delayFeedbackSlider.getX() + delayFeedbackSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, juce::Justification::centred);
+    g.drawText("Dry / Wet", delayWetDryMixSlider.getX() + delayWetDryMixSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, juce::Justification::centred);
 }
 
 void DelayComponent::resized()
