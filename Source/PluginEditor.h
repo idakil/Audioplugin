@@ -13,7 +13,6 @@
 
 using namespace juce;
 
-
 enum MyEnum
 {
     windowWidth = 600,
@@ -313,20 +312,28 @@ struct EffectComponentContainer : public juce::Component, private ChangeListener
 };
 //==============================================================================
 
-struct MainView : public juce::AnimatedAppComponent {
+struct MainView : public juce::AnimatedAppComponent, juce::Slider::Listener {
 
-    MainView(AudiopluginAudioProcessor& p) {
+    MainView(AudiopluginAudioProcessor& p) 
+    : offsetSlider(Slider::LinearHorizontal, Slider::TextBoxRight)
+    , speedSlider(Slider::LinearHorizontal, Slider::TextBoxRight)
+    {
         //p.compressor0.thresh = 0.1f;
         Logger::outputDebugString(std::to_string(p.compressor0.thresh));
 
-        setFramesPerSecond(60);
-        addAndMakeVisible(rect);
-        addMouseListener(this, true);
-        setSize(windowWidth, panelHeight);
-    }
+        addAndMakeVisible(offsetSlider);
+        offsetSlider.addListener(this);
+        offsetSlider.setRange(0.01, 1.0, 0.01);
+        offsetSlider.setValue(circleOffset);
 
-    void resize() {
-        rect.setBounds(20, 20, windowWidth, panelHeight);
+        addAndMakeVisible(speedSlider);
+        speedSlider.addListener(this);
+        speedSlider.setRange(0.01, 1.0, 0.01);
+        speedSlider.setValue(circleSpeed);
+
+        setFramesPerSecond(60);
+
+        addMouseListener(this, true);
     }
 
     void update() override
@@ -334,40 +341,81 @@ struct MainView : public juce::AnimatedAppComponent {
 
     }
 
+    void sliderValueChanged(Slider *slider)
+    {
+        circleOffset = offsetSlider.getValue();
+        circleSpeed = speedSlider.getValue();
+    }
+
     void paint(juce::Graphics& g) override
     {
-        juce::Rectangle<float> area(0, 0, windowWidth, panelHeight);
+        g.fillAll(juce::Colours::goldenrod);
 
-        //juce::Parallelogram<float> p(area);
-        //rect.setRectangle(p);
-        g.setColour(juce::Colours::aqua);
-        g.fillRect(area);
+        auto arcLenght = 15;
+        int radius = 15 + getHeight() * 0.01;
+        
+        juce::Path arc1;
+        juce::Path arc2;
 
-        int radius = 150;
+        for (auto i = 0; i < arcLenght; ++i)
+        {
 
-        juce::Point<float> p(getWidth() / 2.0f + 1.0f * radius, getHeight() / 2.0f + 1.0f * radius);
+            juce::Point<float> p1(circleX + 1.0f * radius * std::sin(getFrameCounter() * circleSpeed + i * circleOffset),
+                circleY + 1.0f * radius * std::cos(getFrameCounter() * circleSpeed + i * circleOffset));
+
+            juce::Point<float> p2(circleX + 1.0f * radius * std::sin(juce::MathConstants<double>::pi + getFrameCounter() * circleSpeed + i * circleOffset),
+                circleY + 1.0f * radius * std::cos(juce::MathConstants<double>::pi + getFrameCounter() * circleSpeed + i * circleOffset));
+
+
+            if (i == 0)
+            {
+                arc1.startNewSubPath(p1);
+                arc2.startNewSubPath(p2);
+            }
+            else
+            {
+                arc1.lineTo(p1);
+                arc2.lineTo(p2);
+            }
+                
+        }
 
         g.setColour(juce::Colours::deeppink);
-        g.drawEllipse(p.x, p.y, 30.0f, 30.0f, 5.0f);
+        g.strokePath(arc1, juce::PathStrokeType(4.0f));
+        g.strokePath(arc2, juce::PathStrokeType(4.0f));
     }
 
     void resized() override
     {
-
+        offsetSlider.setBounds(0, getHeight() - 100, getWidth(), 50);
+        speedSlider.setBounds(0, getHeight() - 50, getWidth(), 50);
     }
 
     void mouseDrag(const MouseEvent& event) {
+        /*
         float midX = 300.0f / (event.getPosition().getX());
         float midY = 200.0f / (event.getPosition().getY());
 
         p.compressor0.changeParams(midX, midY);
         Logger::outputDebugString(std::to_string(p.compressor0.threshParam->get()));
+        */
+
+        circleX = event.getPosition().getX();
+        circleY = event.getPosition().getY();
+
     }
 
     AudiopluginAudioProcessor p;
-    DrawableRectangle rect;
+
+    float circleX = 50.0f;
+    float circleY = 50.0f;
+
+    float circleOffset = 0.16f;
+    float circleSpeed = 0.04f;
+
+    Slider offsetSlider;
+    Slider speedSlider;
 };
-//==============================================================================
 
 class AudiopluginAudioProcessorEditor  : public juce::AudioProcessorEditor
 {

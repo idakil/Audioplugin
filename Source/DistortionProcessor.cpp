@@ -8,7 +8,6 @@
 
 #include "DistortionProcessor.h"
 
-
 void DistortionProcessor::prepareToPlay(double samplerate, int samplesPerBlock, int totalNumInputChannel)
 {
     juce::dsp::ProcessSpec spec{ samplerate, (juce::uint32) samplesPerBlock, (juce::uint32) totalNumInputChannel };

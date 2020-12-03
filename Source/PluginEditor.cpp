@@ -275,7 +275,6 @@ void EqBandComponent::resized()
     //eqFlexBox.performLayout(bounds);
 }
 
-
 //==============================================================================
 AudiopluginAudioProcessorEditor::AudiopluginAudioProcessorEditor (AudiopluginAudioProcessor& p, juce::AudioProcessorValueTreeState& vts)
     : AudioProcessorEditor (&p), 
@@ -289,12 +288,14 @@ AudiopluginAudioProcessorEditor::AudiopluginAudioProcessorEditor (AudiopluginAud
     eqKnobs1(p.eq1), 
     bitCrusherKnobs(p.bitCrusher)*/
 {
+    setResizable(true, true);
     tabbedComponent.reset(new juce::TabbedComponent(juce::TabbedButtonBar::TabsAtTop));
     addAndMakeVisible(tabbedComponent.get());
     tabbedComponent->setTabBarDepth(35);
     tabbedComponent->addTab(TRANS("Perkelidy"), juce::Colour(0xffc483f2), &main, false);
     tabbedComponent->addTab(TRANS("Advanced"), juce::Colour(0xffc483f2), &container, false);
     tabbedComponent->setCurrentTabIndex(0);
+    tabbedComponent->setSize(windowWidth, windowHeight);
 
     setSize(windowWidth, windowHeight);
 }
@@ -306,13 +307,12 @@ AudiopluginAudioProcessorEditor::~AudiopluginAudioProcessorEditor()
 //==============================================================================
 void AudiopluginAudioProcessorEditor::paint (juce::Graphics& g)
 {
-    //g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
-    g.fillAll(juce::Colour(0xffc8a1e3));
 }
 
 void AudiopluginAudioProcessorEditor::resized()
 {
-    tabbedComponent->setBounds(0, 0, windowWidth, windowHeight);
+    tabbedComponent->setBounds(0, 0, getWidth(), getHeight());
+    
+    //tabbedComponent->setBounds(0, 0, getParentWidth(), getParentHeight());
     //flexBox.performLayout(getLocalBounds().toFloat());
-
 }

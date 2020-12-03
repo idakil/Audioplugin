@@ -51,12 +51,5 @@ struct DistortionProcessor : public juce::AudioProcessorParameter::Listener {
 
     double& samplerate;
 
-    juce::dsp::ProcessorChain
-        <
-        juce::dsp::Gain<float>,
-        juce::dsp::WaveShaper<float>,
-        juce::dsp::Gain<float>,
-        juce::dsp::Compressor<float>
-        > processorChain;
-
+    juce::dsp::ProcessorChain<juce::dsp::Gain<float>, juce::dsp::WaveShaper<float>, juce::dsp::Gain<float>, juce::dsp::Compressor<float>> processorChain;
 };

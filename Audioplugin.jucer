@@ -11,7 +11,6 @@
       <FILE id="FsZsVL" name="Compressor.h" compile="0" resource="0" file="Source/Compressor.h"/>
       <FILE id="dnnkLr" name="Equaliser.cpp" compile="1" resource="0" file="Source/Equaliser.cpp"/>
       <FILE id="VYcR9A" name="Equaliser.h" compile="0" resource="0" file="Source/Equaliser.h"/>
-      <FILE id="blSyNt" name="MainView.h" compile="0" resource="0" file="Source/MainView.h"/>
       <FILE id="MSGvm2" name="DistortionProcessor.cpp" compile="1" resource="0"
             file="Source/DistortionProcessor.cpp"/>
       <FILE id="HVVtvs" name="DistortionProcessor.h" compile="0" resource="0"
