@@ -11,8 +11,6 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 
-using namespace juce;
-
 enum MyEnum
 {
     windowWidth = 600,
@@ -23,90 +21,95 @@ enum MyEnum
 };
 //==============================================================================
 
-struct DelayComponent : public Component {
+struct DelayComponent : public juce::Component {
     DelayComponent(DelayProcessor& processor);
 
     void paint(juce::Graphics& g) override;
     void resized() override;
 
-    Slider delayLenghtSlider;
-    Slider delayFeedbackSlider;
-    Slider delayWetDryMixSlider;
+    juce::Slider delayLenghtSlider;
+    juce::Slider delayFeedbackSlider;
+    juce::Slider delayWetDryMixSlider;
 
-    SliderParameterAttachment delayLenghtAttachment;
-    SliderParameterAttachment delayFeedbackAttachment;
-    SliderParameterAttachment delayWetDryMixAttachment;
+    juce::SliderParameterAttachment delayLenghtAttachment;
+    juce::SliderParameterAttachment delayFeedbackAttachment;
+    juce::SliderParameterAttachment delayWetDryMixAttachment;
 
-    FlexBox delayFlexBox;
+    juce::FlexBox delayFlexBox;
 };
 
-struct DistortionComponent : public Component {
+struct DistortionComponent : public juce::Component {
     DistortionComponent(DistortionProcessor& processor);
 
     void paint(juce::Graphics& g) override;
     void resized() override;
 
-    Slider thresholdSlider;
-    Slider ratioSlider;
-    Slider attackSlider;
-    Slider releaseSlider;
-    Slider saturationSlider;
+    juce::Slider thresholdSlider;
+    juce::Slider ratioSlider;
+    juce::Slider attackSlider;
+    juce::Slider releaseSlider;
+    juce::Slider saturationSlider;
 
-    SliderParameterAttachment thresholdAttachment;
-    SliderParameterAttachment ratioAttachment;
-    SliderParameterAttachment attackAttachment;
-    SliderParameterAttachment releaseAttachment;
-    SliderParameterAttachment saturationAttachment;
+    juce::SliderParameterAttachment thresholdAttachment;
+    juce::SliderParameterAttachment ratioAttachment;
+    juce::SliderParameterAttachment attackAttachment;
+    juce::SliderParameterAttachment releaseAttachment;
+    juce::SliderParameterAttachment saturationAttachment;
 
-    FlexBox distortionFlexBox;
+    juce::FlexBox distortionFlexBox;
 };
 
-struct ChorusComponent : public Component {
+struct ChorusComponent : public juce::Component {
 
     ChorusComponent(ChorusProcessor& processor);
 
     void paint(juce::Graphics& g) override;
     void resized() override;
 
-    Slider chorusLenghtSlider;
-    Slider chorusModulationSlider;
-    Slider chorusLfoSpeedSlider;
-    Slider chorusWetDryMixSlider;
+    juce::Slider chorusLenghtSlider;
+    juce::Slider chorusModulationSlider;
+    juce::Slider chorusLfoSpeedSlider;
+    juce::Slider chorusWetDryMixSlider;
 
-    SliderParameterAttachment chorusLenghtAttachment;
-    SliderParameterAttachment chorusModulationAttachment;
-    SliderParameterAttachment chorusLfoAttachment;
-    SliderParameterAttachment chorusWetDryMixAttachment;
+    juce::SliderParameterAttachment chorusLenghtAttachment;
+    juce::SliderParameterAttachment chorusModulationAttachment;
+    juce::SliderParameterAttachment chorusLfoAttachment;
+    juce::SliderParameterAttachment chorusWetDryMixAttachment;
 
-    FlexBox chorusFlexBox;
+    juce::FlexBox chorusFlexBox;
 };
 
-struct EqBandComponent : public Component
+struct EqBandComponent : public juce::Component
 {
     EqBandComponent(Equaliser& eq);
     void paint(juce::Graphics& g) override;
     void resized() override;
 
-    Slider freqSlider;
-    Slider qualSlider;
-    Slider gainSlider;
-    SliderParameterAttachment freqAttachment;
-    SliderParameterAttachment qualAttachment;
-    SliderParameterAttachment gainAttachment;
-    FlexBox eqFlexBox;
-    TextButton header;
+    juce::Slider freqSlider;
+    juce::Slider qualSlider;
+    juce::Slider gainSlider;
+
+    juce::SliderParameterAttachment freqAttachment;
+    juce::SliderParameterAttachment qualAttachment;
+    juce::SliderParameterAttachment gainAttachment;
+
+    juce::FlexBox eqFlexBox;
+    juce::TextButton header;
 };
 
-struct EqualiserContainer : public Component {
+struct EqualiserContainer : public juce::Component {
     EqualiserContainer(Equaliser eq0, Equaliser eq1) :
         eqBandKnobs0(eq0),
         eqBandKnobs1(eq1)
     {
         addAndMakeVisible(eqBandKnobs0);
         addAndMakeVisible(eqBandKnobs1);
+
         eqContainerFlex.items.add(juce::FlexItem(eqBandKnobs0).withFlex(1));
         eqContainerFlex.items.add(juce::FlexItem(eqBandKnobs1).withFlex(1));
+
         setSize(windowWidth, panelHeight);
+
         eqContainerFlex.flexDirection = juce::FlexBox::Direction::column;
         eqContainerFlex.justifyContent = juce::FlexBox::JustifyContent::center;
     }
@@ -116,11 +119,11 @@ struct EqualiserContainer : public Component {
         eqContainerFlex.performLayout(getLocalBounds().toFloat());
     };
     EqBandComponent eqBandKnobs0, eqBandKnobs1;
-    FlexBox eqContainerFlex;
+    juce::FlexBox eqContainerFlex;
 };
 //==============================================================================
 
-struct CompressorComponent : public Component {
+struct CompressorComponent : public juce::Component {
 
     CompressorComponent(Compressor& comp);
     ~CompressorComponent() {};
@@ -128,22 +131,25 @@ struct CompressorComponent : public Component {
     void paint(juce::Graphics& g) override;
     void resized() override;
 
-    Slider threshSlider, slopeSlider, attackSlider, releaseSlider;
-    Label threshLabel, slopeLabel, attackLabel, releaseLabel;
-    SliderParameterAttachment threshAttachment, slopeAttachment, attackAttachment, releaseAttachment;
-    FlexBox compressorFlexBox;
+    juce::Slider threshSlider, slopeSlider, attackSlider, releaseSlider;
+    juce::Label threshLabel, slopeLabel, attackLabel, releaseLabel;
+    juce::SliderParameterAttachment threshAttachment, slopeAttachment, attackAttachment, releaseAttachment;
+    juce::FlexBox compressorFlexBox;
 };
 
-struct CompressorContainer : public Component {
+struct CompressorContainer : public juce::Component {
     CompressorContainer(Compressor comp0, Compressor comp1) :
         compressorKnobs0(comp0),
         compressorKnobs1(comp1)
     {
         addAndMakeVisible(compressorKnobs0);
         addAndMakeVisible(compressorKnobs1);
+
         compContainerFlex.items.add(juce::FlexItem(compressorKnobs0).withFlex(1));
         compContainerFlex.items.add(juce::FlexItem(compressorKnobs1).withFlex(1));
+
         setSize(windowWidth, panelHeight);
+
         compContainerFlex.flexDirection = juce::FlexBox::Direction::column;
         compContainerFlex.justifyContent = juce::FlexBox::JustifyContent::center;
     }
@@ -152,36 +158,36 @@ struct CompressorContainer : public Component {
     void resized() override {
         compContainerFlex.performLayout(getLocalBounds().toFloat());
     };
-    FlexBox compContainerFlex;
+    juce::FlexBox compContainerFlex;
     CompressorComponent compressorKnobs0, compressorKnobs1;
 };
 //==============================================================================
 
-struct BitCrusherComponent : public Component {
+struct BitCrusherComponent : public juce::Component {
     BitCrusherComponent(BitCrusher& bitCrusher);
     ~BitCrusherComponent() {};
 
     void paint(juce::Graphics& g) override;
     void resized() override;
 
-    Slider bitReduxSlider, rateReduxSlider, noiseSlider;
-    SliderParameterAttachment bitReduxAttachment, rateReduxAttachment, noiseAttachment;
-    FlexBox bitCrusherFlexBox;
+    juce::Slider bitReduxSlider, rateReduxSlider, noiseSlider;
+    juce::SliderParameterAttachment bitReduxAttachment, rateReduxAttachment, noiseAttachment;
+    juce::FlexBox bitCrusherFlexBox;
 };
 //==============================================================================
 
-class ConcertinaHeader : public Component,
-    public ChangeBroadcaster
+class ConcertinaHeader : public juce::Component,
+    public juce::ChangeBroadcaster
 {
 public:
-    ConcertinaHeader(String n)
-        : Component(n), name(n)
+    ConcertinaHeader(juce::String n)
+        : juce::Component(n), name(n)
     {
         //panelIcon = Icon(iconPath, Colours::white);
-        nameLabel.setText(name, dontSendNotification);
-        nameLabel.setJustificationType(Justification::centredLeft);
+        nameLabel.setText(name, juce::dontSendNotification);
+        nameLabel.setJustificationType(juce::Justification::centredLeft);
         nameLabel.setInterceptsMouseClicks(false, false);
-        nameLabel.setColour(Label::textColourId, Colours::white);
+        nameLabel.setColour(juce::Label::textColourId, juce::Colours::white);
 
         addAndMakeVisible(nameLabel);
     }
@@ -195,19 +201,19 @@ public:
         nameLabel.setBounds(b.toNearestInt());
     }
 
-    void paint(Graphics& g) override
+    void paint(juce::Graphics& g) override
     {
         //g.setColour(findColour(defaultButtonBackgroundColourId));
         g.fillRoundedRectangle(getLocalBounds().reduced(2, 3).toFloat(), 2.0f);
 
-        g.setColour(Colours::white);
+        g.setColour(juce::Colours::white);
         /* g.fillPath(arrowPath = ProjucerLookAndFeel::getArrowPath(arrowBounds,
              getParentComponent()->getBoundsInParent().getY() == yPosition ? 2 : 0,
              true, Justification::centred));*/
 
     }
 
-    void mouseUp(const MouseEvent& e) override
+    void mouseUp(const juce::MouseEvent& e) override
     {
         if (!e.mouseWasDraggedSinceMouseDown())
             sendChangeMessage();
@@ -217,18 +223,18 @@ public:
     int yPosition = 0;
 
 private:
-    String name;
-    Label nameLabel;
+    juce::String name;
+    juce::Label nameLabel;
 
-    Path iconPath;
+    juce::Path iconPath;
 
-    Rectangle<float> arrowBounds, iconBounds;
-    Path arrowPath;
+    juce::Rectangle<float> arrowBounds, iconBounds;
+    juce::Path arrowPath;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ConcertinaHeader)
 };
 
-struct EffectComponentContainer : public juce::Component, private ChangeListener {
+struct EffectComponentContainer : public juce::Component, private juce::ChangeListener {
     EffectComponentContainer(AudiopluginAudioProcessor& p) {
         for (auto i = concertinaPanel.getNumPanels() - 1; i >= 0; --i)
             concertinaPanel.removePanel(concertinaPanel.getPanel(i));
@@ -286,7 +292,7 @@ struct EffectComponentContainer : public juce::Component, private ChangeListener
         concertinaPanel.setSize(windowWidth, panelHeight);
     }
 
-    void changeListenerCallback(ChangeBroadcaster* source) override
+    void changeListenerCallback(juce::ChangeBroadcaster* source) override
     {
         if (auto* header = dynamic_cast<ConcertinaHeader*> (source))
         {
@@ -305,23 +311,23 @@ struct EffectComponentContainer : public juce::Component, private ChangeListener
         flexBox.performLayout(getLocalBounds().toFloat());
     }
 
-    Viewport viewPort;
+    juce::Viewport viewPort;
 
-    FlexBox flexBox;
+    juce::FlexBox flexBox;
 
-    ConcertinaPanel concertinaPanel;
-    OwnedArray<ConcertinaHeader> headers;
+    juce::ConcertinaPanel concertinaPanel;
+    juce::OwnedArray<ConcertinaHeader> headers;
 };
 //==============================================================================
 
 struct MainView : public juce::AnimatedAppComponent, juce::Slider::Listener {
 
     MainView(AudiopluginAudioProcessor& p) 
-    : offsetSlider(Slider::LinearHorizontal, Slider::TextBoxRight)
-    , speedSlider(Slider::LinearHorizontal, Slider::TextBoxRight)
+    : offsetSlider(juce::Slider::LinearHorizontal, juce::Slider::TextBoxRight)
+    , speedSlider(juce::Slider::LinearHorizontal, juce::Slider::TextBoxRight)
     {
         //p.compressor0.thresh = 0.1f;
-        Logger::outputDebugString(std::to_string(p.compressor0.thresh));
+        juce::Logger::outputDebugString(std::to_string(p.compressor0.thresh));
 
         addAndMakeVisible(offsetSlider);
         offsetSlider.addListener(this);
@@ -343,7 +349,7 @@ struct MainView : public juce::AnimatedAppComponent, juce::Slider::Listener {
 
     }
 
-    void sliderValueChanged(Slider *slider)
+    void sliderValueChanged(juce::Slider *slider)
     {
         circleOffset = offsetSlider.getValue();
         circleSpeed = speedSlider.getValue();
@@ -397,7 +403,7 @@ struct MainView : public juce::AnimatedAppComponent, juce::Slider::Listener {
         speedSlider.setBounds(0, getHeight() - 50, getWidth(), 50);
     }
 
-    void mouseDrag(const MouseEvent& event) override
+    void mouseDrag(const juce::MouseEvent& event) override
     {
         /*
         float midX = 300.0f / (event.getPosition().getX());
@@ -420,8 +426,8 @@ struct MainView : public juce::AnimatedAppComponent, juce::Slider::Listener {
     float circleOffset = 0.16f;
     float circleSpeed = 0.04f;
 
-    Slider offsetSlider;
-    Slider speedSlider;
+    juce::Slider offsetSlider;
+    juce::Slider speedSlider;
 };
 
 class AudiopluginAudioProcessorEditor  : public juce::AudioProcessorEditor

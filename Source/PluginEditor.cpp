@@ -2,11 +2,11 @@
 #include "PluginEditor.h"
 
 DistortionComponent::DistortionComponent(DistortionProcessor& processor)
-    : thresholdSlider(Slider::RotaryVerticalDrag, Slider::TextBoxBelow)
-    , ratioSlider(Slider::RotaryVerticalDrag, Slider::TextBoxBelow)
-    , attackSlider(Slider::RotaryVerticalDrag, Slider::TextBoxBelow)
-    , releaseSlider(Slider::RotaryVerticalDrag, Slider::TextBoxBelow)
-    , saturationSlider(Slider::RotaryVerticalDrag, Slider::TextBoxBelow)
+    : thresholdSlider(juce::Slider::RotaryVerticalDrag, juce::Slider::TextBoxBelow)
+    , ratioSlider(juce::Slider::RotaryVerticalDrag, juce::Slider::TextBoxBelow)
+    , attackSlider(juce::Slider::RotaryVerticalDrag, juce::Slider::TextBoxBelow)
+    , releaseSlider(juce::Slider::RotaryVerticalDrag, juce::Slider::TextBoxBelow)
+    , saturationSlider(juce::Slider::RotaryVerticalDrag, juce::Slider::TextBoxBelow)
     , thresholdAttachment(*processor.thresholdParam, thresholdSlider)
     , ratioAttachment(*processor.ratioParam, ratioSlider)
     , attackAttachment(*processor.attackParam, attackSlider)
@@ -31,16 +31,16 @@ DistortionComponent::DistortionComponent(DistortionProcessor& processor)
 
 void DistortionComponent::paint(juce::Graphics& g)
 {
-    g.fillAll(Colours::midnightblue.withMultipliedBrightness(.4));
+    g.fillAll(juce::Colours::midnightblue.withMultipliedBrightness(.4));
 
-    g.setColour(Colours::beige);
+    g.setColour(juce::Colours::beige);
 
     int labelW = 100;
-    g.drawText("Threshold", thresholdSlider.getX() + thresholdSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, Justification::centred);
-    g.drawText("Ratio??", ratioSlider.getX() + ratioSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, Justification::centred);
-    g.drawText("Attack", attackSlider.getX() + attackSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, Justification::centred);
-    g.drawText("Release", releaseSlider.getX() + releaseSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, Justification::centred);
-    g.drawText("Saturation", saturationSlider.getX() + saturationSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, Justification::centred);
+    g.drawText("Threshold", thresholdSlider.getX() + thresholdSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, juce::Justification::centred);
+    g.drawText("Ratio??", ratioSlider.getX() + ratioSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, juce::Justification::centred);
+    g.drawText("Attack", attackSlider.getX() + attackSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, juce::Justification::centred);
+    g.drawText("Release", releaseSlider.getX() + releaseSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, juce::Justification::centred);
+    g.drawText("Saturation", saturationSlider.getX() + saturationSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, juce::Justification::centred);
 }
 
 void DistortionComponent::resized()
@@ -51,10 +51,10 @@ void DistortionComponent::resized()
 }
 
 ChorusComponent::ChorusComponent(ChorusProcessor& processor)
-    : chorusLenghtSlider(Slider::LinearVertical, Slider::TextBoxBelow)
-    , chorusModulationSlider(Slider::LinearVertical, Slider::TextBoxBelow)
-    , chorusLfoSpeedSlider(Slider::LinearVertical, Slider::TextBoxBelow)
-    , chorusWetDryMixSlider(Slider::LinearVertical, Slider::TextBoxBelow)
+    : chorusLenghtSlider(juce::Slider::LinearVertical, juce::Slider::TextBoxBelow)
+    , chorusModulationSlider(juce::Slider::LinearVertical, juce::Slider::TextBoxBelow)
+    , chorusLfoSpeedSlider(juce::Slider::LinearVertical, juce::Slider::TextBoxBelow)
+    , chorusWetDryMixSlider(juce::Slider::LinearVertical, juce::Slider::TextBoxBelow)
     , chorusLenghtAttachment(*processor.lenghtParam, chorusLenghtSlider)
     , chorusModulationAttachment(*processor.modAmountParam, chorusModulationSlider)
     , chorusLfoAttachment(*processor.lfoSpeedParam, chorusLfoSpeedSlider)
@@ -75,15 +75,15 @@ ChorusComponent::ChorusComponent(ChorusProcessor& processor)
 
 void ChorusComponent::paint(juce::Graphics& g)
 {
-    g.fillAll(Colours::midnightblue.withMultipliedBrightness(.4));
+    g.fillAll(juce::Colours::midnightblue.withMultipliedBrightness(.4));
 
-    g.setColour(Colours::beige);
+    g.setColour(juce::Colours::beige);
 
     int labelW = 100;
-    g.drawText("Delay lenght", chorusLenghtSlider.getX() + chorusLenghtSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, Justification::centred);
-    g.drawText("Modulation", chorusModulationSlider.getX() + chorusModulationSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, Justification::centred);
-    g.drawText("LFO speed", chorusLfoSpeedSlider.getX() + chorusLfoSpeedSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, Justification::centred);
-    g.drawText("Wet / Dry", chorusWetDryMixSlider.getX() + chorusWetDryMixSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, Justification::centred);
+    g.drawText("Delay lenght", chorusLenghtSlider.getX() + chorusLenghtSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, juce::Justification::centred);
+    g.drawText("Modulation", chorusModulationSlider.getX() + chorusModulationSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, juce::Justification::centred);
+    g.drawText("LFO speed", chorusLfoSpeedSlider.getX() + chorusLfoSpeedSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, juce::Justification::centred);
+    g.drawText("Wet / Dry", chorusWetDryMixSlider.getX() + chorusWetDryMixSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, juce::Justification::centred);
 }
 
 void ChorusComponent::resized()
@@ -93,11 +93,10 @@ void ChorusComponent::resized()
     chorusFlexBox.performLayout(bounds);
 }
 
-
 DelayComponent::DelayComponent(DelayProcessor& processor)
-    : delayLenghtSlider(Slider::LinearVertical, Slider::TextBoxBelow)
-    , delayFeedbackSlider(Slider::LinearVertical, Slider::TextBoxBelow)
-    , delayWetDryMixSlider(Slider::LinearVertical, Slider::TextBoxBelow)
+    : delayLenghtSlider(juce::Slider::LinearVertical, juce::Slider::TextBoxBelow)
+    , delayFeedbackSlider(juce::Slider::LinearVertical, juce::Slider::TextBoxBelow)
+    , delayWetDryMixSlider(juce::Slider::LinearVertical, juce::Slider::TextBoxBelow)
     , delayLenghtAttachment(*processor.lenghtParam, delayLenghtSlider)
     , delayFeedbackAttachment(*processor.feedbackParam, delayFeedbackSlider)
     , delayWetDryMixAttachment(*processor.wetDryMixParam, delayWetDryMixSlider)
@@ -114,17 +113,16 @@ DelayComponent::DelayComponent(DelayProcessor& processor)
     delayFlexBox.items.add(juce::FlexItem(delayWetDryMixSlider).withFlex(1).withMargin(margin));
 }
 
-
 void DelayComponent::paint(juce::Graphics& g)
 {
-    g.fillAll(Colours::midnightblue.withMultipliedBrightness(.4));
+    g.fillAll(juce::Colours::midnightblue.withMultipliedBrightness(.4));
 
-    g.setColour(Colours::beige);
+    g.setColour(juce::Colours::beige);
 
     int labelW = 100;
-    g.drawText("Thresh", delayLenghtSlider.getX() + delayLenghtSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, Justification::centred);
-    g.drawText("Slope", delayFeedbackSlider.getX() + delayFeedbackSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, Justification::centred);
-    g.drawText("Attack", delayWetDryMixSlider.getX() + delayWetDryMixSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, Justification::centred);
+    g.drawText("Thresh", delayLenghtSlider.getX() + delayLenghtSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, juce::Justification::centred);
+    g.drawText("Slope", delayFeedbackSlider.getX() + delayFeedbackSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, juce::Justification::centred);
+    g.drawText("Attack", delayWetDryMixSlider.getX() + delayWetDryMixSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, juce::Justification::centred);
 }
 
 void DelayComponent::resized()
@@ -135,10 +133,10 @@ void DelayComponent::resized()
 }
 
 CompressorComponent::CompressorComponent(Compressor& comp)
-    : threshSlider(Slider::LinearVertical, Slider::TextBoxBelow)
-    , slopeSlider(Slider::LinearVertical, Slider::TextBoxBelow)
-    , attackSlider(Slider::LinearVertical, Slider::TextBoxBelow)
-    , releaseSlider(Slider::LinearVertical, Slider::TextBoxBelow)
+    : threshSlider(juce::Slider::LinearVertical, juce::Slider::TextBoxBelow)
+    , slopeSlider(juce::Slider::LinearVertical, juce::Slider::TextBoxBelow)
+    , attackSlider(juce::Slider::LinearVertical, juce::Slider::TextBoxBelow)
+    , releaseSlider(juce::Slider::LinearVertical, juce::Slider::TextBoxBelow)
 
     , threshAttachment(*comp.threshParam, threshSlider)
     , slopeAttachment(*comp.ratioParam, slopeSlider)
@@ -158,15 +156,15 @@ CompressorComponent::CompressorComponent(Compressor& comp)
 }
 
 void CompressorComponent::paint(juce::Graphics& g) {
-    g.fillAll(Colours::midnightblue.withMultipliedBrightness(.4));
+    g.fillAll(juce::Colours::midnightblue.withMultipliedBrightness(.4));
 
-    g.setColour(Colours::beige);
+    g.setColour(juce::Colours::beige);
 
     int labelW = 100;
-    g.drawText("Thresh", threshSlider.getX() + threshSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, Justification::centred);
-    g.drawText("Slope", slopeSlider.getX() + slopeSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, Justification::centred);
-    g.drawText("Attack", attackSlider.getX() + attackSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, Justification::centred);
-    g.drawText("Release", releaseSlider.getX() + releaseSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, Justification::centred);
+    g.drawText("Thresh", threshSlider.getX() + threshSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, juce::Justification::centred);
+    g.drawText("Slope", slopeSlider.getX() + slopeSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, juce::Justification::centred);
+    g.drawText("Attack", attackSlider.getX() + attackSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, juce::Justification::centred);
+    g.drawText("Release", releaseSlider.getX() + releaseSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, juce::Justification::centred);
 };
 void CompressorComponent::resized() {
     int w = 100;
@@ -183,9 +181,9 @@ void CompressorComponent::resized() {
 //==============================================================================
 
 BitCrusherComponent::BitCrusherComponent(BitCrusher& bitCrusher)
-    : bitReduxSlider(Slider::LinearVertical, Slider::TextBoxBelow)
-    , rateReduxSlider(Slider::LinearVertical, Slider::TextBoxBelow)
-    , noiseSlider(Slider::LinearVertical, Slider::TextBoxBelow)
+    : bitReduxSlider(juce::Slider::LinearVertical, juce::Slider::TextBoxBelow)
+    , rateReduxSlider(juce::Slider::LinearVertical, juce::Slider::TextBoxBelow)
+    , noiseSlider(juce::Slider::LinearVertical, juce::Slider::TextBoxBelow)
     , bitReduxAttachment(*bitCrusher.bitReduxParam, bitReduxSlider)
     , rateReduxAttachment(*bitCrusher.rateReduxParam, rateReduxSlider)
     , noiseAttachment(*bitCrusher.noiseParam, noiseSlider)
@@ -200,15 +198,15 @@ BitCrusherComponent::BitCrusherComponent(BitCrusher& bitCrusher)
 
 }
 
-void BitCrusherComponent::paint(Graphics& g)
+void BitCrusherComponent::paint(juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll(Colours::midnightblue.withMultipliedBrightness(.4));
-    g.setColour(Colours::beige);
+    g.fillAll(juce::Colours::midnightblue.withMultipliedBrightness(.4));
+    g.setColour(juce::Colours::beige);
     int labelW = 100;
-    g.drawText("Noise", noiseSlider.getX() + noiseSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, Justification::centred);
-    g.drawText("BitRedux", bitReduxSlider.getX() + bitReduxSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, Justification::centred);
-    g.drawText("RateRedux", rateReduxSlider.getX() + rateReduxSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, Justification::centred);
+    g.drawText("Noise", noiseSlider.getX() + noiseSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, juce::Justification::centred);
+    g.drawText("BitRedux", bitReduxSlider.getX() + bitReduxSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, juce::Justification::centred);
+    g.drawText("RateRedux", rateReduxSlider.getX() + rateReduxSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, juce::Justification::centred);
 }
 
 void BitCrusherComponent::resized()
@@ -227,9 +225,9 @@ void BitCrusherComponent::resized()
 //==============================================================================
 
 EqBandComponent::EqBandComponent(Equaliser& eq)
-    : freqSlider(Slider::LinearVertical, Slider::TextBoxBelow)
-    , qualSlider(Slider::LinearVertical, Slider::TextBoxBelow)
-    , gainSlider(Slider::LinearVertical, Slider::TextBoxBelow)
+    : freqSlider(juce::Slider::LinearVertical, juce::Slider::TextBoxBelow)
+    , qualSlider(juce::Slider::LinearVertical, juce::Slider::TextBoxBelow)
+    , gainSlider(juce::Slider::LinearVertical, juce::Slider::TextBoxBelow)
     , freqAttachment(*eq.freqParam, freqSlider)
     , qualAttachment(*eq.qualParam, qualSlider)
     , gainAttachment(*eq.gainParam, gainSlider)
@@ -252,12 +250,12 @@ EqBandComponent::EqBandComponent(Equaliser& eq)
 
 void EqBandComponent::paint(juce::Graphics& g)
 {
-    g.fillAll(Colours::midnightblue.withMultipliedBrightness(.4));
-    g.setColour(Colours::beige);
+    g.fillAll(juce::Colours::midnightblue.withMultipliedBrightness(.4));
+    g.setColour(juce::Colours::beige);
     int labelW = 100;
-    g.drawText("Freq", freqSlider.getX() + freqSlider.getWidth() / 2 - labelW / 2, 40, labelW, 20, Justification::centred);
-    g.drawText("qual", qualSlider.getX() + qualSlider.getWidth() / 2 - labelW / 2, 40, labelW, 20, Justification::centred);
-    g.drawText("gain", gainSlider.getX() + gainSlider.getWidth() / 2 - labelW / 2, 40, labelW, 20, Justification::centred);
+    g.drawText("Freq", freqSlider.getX() + freqSlider.getWidth() / 2 - labelW / 2, 40, labelW, 20, juce::Justification::centred);
+    g.drawText("qual", qualSlider.getX() + qualSlider.getWidth() / 2 - labelW / 2, 40, labelW, 20, juce::Justification::centred);
+    g.drawText("gain", gainSlider.getX() + gainSlider.getWidth() / 2 - labelW / 2, 40, labelW, 20, juce::Justification::centred);
 }
 
 void EqBandComponent::resized()
@@ -312,7 +310,4 @@ void AudiopluginAudioProcessorEditor::paint (juce::Graphics& g)
 void AudiopluginAudioProcessorEditor::resized()
 {
     tabbedComponent->setBounds(0, 0, getWidth(), getHeight());
-    
-    //tabbedComponent->setBounds(0, 0, getParentWidth(), getParentHeight());
-    //flexBox.performLayout(getLocalBounds().toFloat());
 }

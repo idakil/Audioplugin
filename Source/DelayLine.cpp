@@ -19,7 +19,7 @@ int wrapToRange(int number, int min, int max)
 DelayLine::DelayLine(int maxNumSamples)
     : maxNumSamples(maxNumSamples)
 {
-    buffer = new AudioBuffer<double>(1, maxNumSamples);
+    buffer = new juce::AudioBuffer<double>(1, maxNumSamples);
     writehead = 0;
     buffer->clear();
 }

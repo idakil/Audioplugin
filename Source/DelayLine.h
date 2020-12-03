@@ -9,7 +9,6 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
-using namespace juce;
 
 class DelayLine
 {
@@ -28,7 +27,7 @@ public:
 
 private:
 
-    AudioBuffer<double>* buffer;
+    juce::AudioBuffer<double>* buffer;
 
     int writehead;
     const int maxNumSamples;

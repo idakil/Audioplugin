@@ -47,8 +47,8 @@ void ChorusProcessor::prepareToPlay(double sampleRate)
     rightDelayLine.reset(new DelayLine(maxDelayLineInSamples));
 
     // Create our LFOs
-    const double leftStartingPhase = MathConstants<double>::twoPi * 0;
-    const double rightStartingPhase = MathConstants<double>::twoPi * 0.25;
+    const double leftStartingPhase = juce::MathConstants<double>::twoPi * 0;
+    const double rightStartingPhase = juce::MathConstants<double>::twoPi * 0.25;
 
     leftLfoOsc.reset(new SineOscillator(sampleRate, freqInHz, leftStartingPhase));
     rightLfoOsc.reset(new SineOscillator(sampleRate, freqInHz, rightStartingPhase));

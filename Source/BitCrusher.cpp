@@ -37,8 +37,8 @@ float BitCrusher::getWhiteNoise() {
     float u1 = 0;
     float u2 = 0;
 
-    Random r = Random::getSystemRandom();
-    r.setSeed(Time::getCurrentTime().getMilliseconds());
+    juce::Random r = juce::Random::getSystemRandom();
+    r.setSeed(juce::Time::getCurrentTime().getMilliseconds());
 
 
         // GENERATE ::::
@@ -56,8 +56,8 @@ float BitCrusher::getWhiteNoise() {
                 u2 = r.nextFloat();
             } while (u1 <= epsilon);
 
-            z0 = sqrtf(-2.0f * logf(u1)) * cosf(2.0f * float(double_Pi) * u2);
-            z1 = sqrtf(-2.0f * logf(u1)) * sinf(2.0f * float(double_Pi) * u2);
+            z0 = sqrtf(-2.0f * logf(u1)) * cosf(2.0f * float(juce::MathConstants<float>::twoPi) * u2);
+            z1 = sqrtf(-2.0f * logf(u1)) * sinf(2.0f * float(juce::MathConstants<float>::twoPi) * u2);
 
             output = z0 * sigma + mu;
         }
@@ -74,21 +74,21 @@ float BitCrusher::getWhiteNoise() {
 
 
 void BitCrusher::process(float& leftSample, float& rightSample) {
-    ScopedNoDenormals noDenormals;
+    juce::ScopedNoDenormals noDenormals;
 
     float noiseAmt = -120 + 120 * (noise / 100); // dB
     float bitDepth = bitRedux;
     float rateDivide = rateRedux;
 
     // GET PARAMETERS :::::
-    noiseAmt = jlimit<float>(-120, 0, noiseAmt);
-    noiseAmt = Decibels::decibelsToGain(noiseAmt);
+    noiseAmt = juce::jlimit<float>(-120, 0, noiseAmt);
+    noiseAmt = juce::Decibels::decibelsToGain(noiseAmt);
 
     // BUILD NOISE ::::::
     float whiteNoise = getWhiteNoise();
 
     // range bound
-    noiseAmt = jlimit<float>(0, 1, noiseAmt);
+    noiseAmt = juce::jlimit<float>(0, 1, noiseAmt);
 
     float left = (noiseAmt * whiteNoise) + leftSample;
     float right = (noiseAmt * whiteNoise) + rightSample;

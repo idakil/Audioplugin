@@ -17,8 +17,8 @@ Compressor::Compressor(AudiopluginAudioProcessor& p)
 
 float Compressor::compressSample(float& data)
 {
-    float at = 1 - std::pow(MathConstants<float>::euler, ((1 / samplerate) * -2.2f) / (attack / 1000.0f));
-    float rt = 1 - std::pow(MathConstants<float>::euler, ((1 / samplerate) * -2.2f) / (release / 1000.0f));
+    float at = 1 - std::pow(juce::MathConstants<float>::euler, ((1 / samplerate) * -2.2f) / (attack / 1000.0f));
+    float rt = 1 - std::pow(juce::MathConstants<float>::euler, ((1 / samplerate) * -2.2f) / (release / 1000.0f));
 
     rms = (1 - tav) * rms + tav * std::pow(data, 2.0f);
     float dbRMS = 10 * std::log10(rms);

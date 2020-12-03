@@ -2,7 +2,6 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
-using namespace juce;
 
 /*
 Bitcrusher 
@@ -12,14 +11,14 @@ Resolution 1bit-24bit = bit depth = biredux ?
 Drive 0,0-50,0dB
 */
 
-struct BitCrusher : public AudioProcessorParameter::Listener {
+struct BitCrusher : public juce::AudioProcessorParameter::Listener {
 
     template <class AudioProcessorType>
     BitCrusher(AudioProcessorType& processor, double& fs) : samplerate(fs) {
 
-        bitReduxParam = new AudioParameterFloat("bitRedux", "bitRedux", 1.0f, 40.0f, 32.0f);
-        rateReduxParam = new AudioParameterFloat("rateRedux", "rateRedux", 1.0f, 40.0f, 1.0f);
-        noiseParam = new AudioParameterFloat("noise", "noise", 0.0f, 100.0f, 0.0f);
+        bitReduxParam = new juce::AudioParameterFloat("bitRedux", "bitRedux", 1.0f, 40.0f, 32.0f);
+        rateReduxParam = new juce::AudioParameterFloat("rateRedux", "rateRedux", 1.0f, 40.0f, 1.0f);
+        noiseParam = new juce::AudioParameterFloat("noise", "noise", 0.0f, 100.0f, 0.0f);
  
         processor.addParameter(bitReduxParam);
         processor.addParameter(rateReduxParam);
@@ -45,8 +44,8 @@ struct BitCrusher : public AudioProcessorParameter::Listener {
     float getWhiteNoise();
     float epsilon;
 
-    AudioParameterFloat* bitReduxParam, * rateReduxParam, * noiseParam;
-    AudioSampleBuffer noiseBuffer, currentOutputBuffer;
+    juce::AudioParameterFloat* bitReduxParam, * rateReduxParam, * noiseParam;
+    juce::AudioSampleBuffer noiseBuffer, currentOutputBuffer;
     float bitRedux, rateRedux, noise;
     double& samplerate;
 };

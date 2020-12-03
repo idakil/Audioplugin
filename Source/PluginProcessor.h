@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <JuceHeader.h>
@@ -9,9 +8,6 @@
 #include "DistortionProcessor.h"
 #include "DelayProcessor.h"
 
-//==============================================================================
-/**
-*/
 class AudiopluginAudioProcessor  : public juce::AudioProcessor
 {
 public:

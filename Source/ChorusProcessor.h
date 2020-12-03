@@ -13,14 +13,14 @@
 #include "DelayLine.h"
 #include "SineOscillator.h"
 
-struct ChorusProcessor : public AudioProcessorParameter::Listener {
+struct ChorusProcessor : public juce::AudioProcessorParameter::Listener {
     template <class AudioProcessorType>
     ChorusProcessor(AudioProcessorType& processor, double& fs) : samplerate(fs)
     {
-        lenghtParam = new AudioParameterFloat("chorus_lenght", "Delay Lenght (s)", 0.01f, 0.50f, 0.01f);
-        modAmountParam = new AudioParameterFloat("chorus_modamount", "Delay Modulation (ms)", 0.0f, 20.0f, 0.10f);
-        lfoSpeedParam = new AudioParameterFloat("chorus_lfospeed", "LFO Speed", 0.0f, 20.0f, 0.5f);
-        wetDryMixParam = new AudioParameterFloat("chorus_wetdry", "Chorus Wet Dry Mix", 0.0f, 1.0f, 0.5f);
+        lenghtParam = new juce::AudioParameterFloat("chorus_lenght", "Delay Lenght (s)", 0.01f, 0.50f, 0.01f);
+        modAmountParam = new juce::AudioParameterFloat("chorus_modamount", "Delay Modulation (ms)", 0.0f, 20.0f, 0.10f);
+        lfoSpeedParam = new juce::AudioParameterFloat("chorus_lfospeed", "LFO Speed", 0.0f, 20.0f, 0.5f);
+        wetDryMixParam = new juce::AudioParameterFloat("chorus_wetdry", "Chorus Wet Dry Mix", 0.0f, 1.0f, 0.5f);
 
         processor.addParameter(lenghtParam);
         processor.addParameter(modAmountParam);
@@ -41,10 +41,10 @@ struct ChorusProcessor : public AudioProcessorParameter::Listener {
     void parameterValueChanged(int /* parameterIndex */, float /* newValue */) override;
     void parameterGestureChanged(int parameterIndex, bool gestureIsStarting) override {}
 
-    AudioParameterFloat* lenghtParam;
-    AudioParameterFloat* modAmountParam;
-    AudioParameterFloat* lfoSpeedParam;
-    AudioParameterFloat* wetDryMixParam;
+    juce::AudioParameterFloat* lenghtParam;
+    juce::AudioParameterFloat* modAmountParam;
+    juce::AudioParameterFloat* lfoSpeedParam;
+    juce::AudioParameterFloat* wetDryMixParam;
 
     std::unique_ptr<DelayLine> leftDelayLine;
     std::unique_ptr<DelayLine> rightDelayLine;

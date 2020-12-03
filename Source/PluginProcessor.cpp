@@ -12,7 +12,7 @@ AudiopluginAudioProcessor::AudiopluginAudioProcessor()
         .withOutput("Output", juce::AudioChannelSet::stereo(), true)
 #endif
     )
-    , parameters(*this, nullptr, Identifier("params"), createParameterLayout())
+    , parameters(*this, nullptr, juce::Identifier("params"), createParameterLayout())
     , eq0(*this, "eq0", 0, samplerate) // call the constructors of FilterBands on initialisation
     , eq1(*this, "eq1", 1, samplerate)
     , compressor0(*this, "comp0", samplerate)
@@ -28,9 +28,6 @@ AudiopluginAudioProcessor::AudiopluginAudioProcessor()
 AudiopluginAudioProcessor::~AudiopluginAudioProcessor()
 {
 }
-
-
-
 
 juce::AudioProcessorValueTreeState::ParameterLayout AudiopluginAudioProcessor::createParameterLayout()
 {
