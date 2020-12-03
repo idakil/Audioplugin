@@ -6,10 +6,10 @@ struct Equaliser : public juce::AudioProcessorParameter::Listener {
 
     template <class AudioProcessorType>
     Equaliser(AudioProcessorType& processor, juce::String bandName, int defaultType, double& fs) : samplerate(fs) {
-        freqParam = new AudioParameterFloat(bandName + "freq", bandName + " Freq", 20, 20000, 200);
-        qualParam = new AudioParameterFloat(bandName + "qual", bandName + " Q", 0.1, 16, 0.707);
-        gainParam = new AudioParameterFloat(bandName + "gain", bandName + " Gain", -30, 30, 0);
-        typeParam = new AudioParameterChoice(bandName + "type", bandName + " Type", { "Lowpass", "Peaking", }, defaultType);
+        freqParam = new juce::AudioParameterFloat(bandName + "freq", bandName + " Freq", 20, 20000, 200);
+        qualParam = new juce::AudioParameterFloat(bandName + "qual", bandName + " Q", 0.1, 16, 0.707);
+        gainParam = new juce::AudioParameterFloat(bandName + "gain", bandName + " Gain", -30, 30, 0);
+        typeParam = new juce::AudioParameterChoice(bandName + "type", bandName + " Type", { "Lowpass", "Peaking", }, defaultType);
 
         // Add the newly created parameters to the audio processor
         processor.addParameter(freqParam);

@@ -295,11 +295,13 @@ struct EffectComponentContainer : public juce::Component, private ChangeListener
         }
     }
 
-    void paint(juce::Graphics& g) {
+    void paint(juce::Graphics& g) override
+    {
         g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
     }
 
-    void resized() {
+    void resized() override
+    {
         flexBox.performLayout(getLocalBounds().toFloat());
     }
 
@@ -395,7 +397,8 @@ struct MainView : public juce::AnimatedAppComponent, juce::Slider::Listener {
         speedSlider.setBounds(0, getHeight() - 50, getWidth(), 50);
     }
 
-    void mouseDrag(const MouseEvent& event) {
+    void mouseDrag(const MouseEvent& event) override
+    {
         /*
         float midX = 300.0f / (event.getPosition().getX());
         float midY = 200.0f / (event.getPosition().getY());
