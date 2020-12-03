@@ -383,6 +383,10 @@ struct MainView : public juce::AnimatedAppComponent, juce::Slider::Listener {
         g.setColour(juce::Colours::deeppink);
         g.strokePath(arc1, juce::PathStrokeType(4.0f));
         g.strokePath(arc2, juce::PathStrokeType(4.0f));
+
+        g.setColour(juce::Colours::white);
+        g.drawLine(0, circleY, getWidth(), circleY);
+        g.drawLine(circleX, 0, circleX, getHeight());
     }
 
     void resized() override
