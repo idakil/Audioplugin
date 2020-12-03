@@ -17,8 +17,8 @@ struct Compressor : public juce::AudioProcessorParameter::Listener {
     Compressor(AudioProcessorType& processor, juce::String name, double& fs) : samplerate(fs) {
         threshParam = new juce::AudioParameterFloat(name + "th", name + "thht", -60.0f, 0.0f, -12.0f);
         ratioParam = new juce::AudioParameterFloat( name + "ratio_param", name + "ratio", 1.0f, 30.0f, 2.0f);
-        attackParam = new juce::AudioParameterFloat(name + "attackParam", name + "attackParam", 0.01f, 250.0f, 10.0f);
-        releaseParam = new juce::AudioParameterFloat(name + "releaseParam", name + "releaseParam", 10.0f, 2500.0f, 200.0f);
+        attackParam = new juce::AudioParameterFloat(name + "attackParam", name + "attackParam", 0.01f, 50, 10.0f);
+        releaseParam = new juce::AudioParameterFloat(name + "releaseParam", name + "releaseParam", 10.0f, 500.0f, 200.0f);
 
         processor.addParameter(threshParam);
         processor.addParameter(ratioParam);

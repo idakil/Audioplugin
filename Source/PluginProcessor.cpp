@@ -136,6 +136,19 @@ void AudiopluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
     // Mono processing
     if (totalNumInputChannels == 1 && totalNumOutputChannels == 1)
     {
+        float* data = buffer.getWritePointer(0);
+
+        for (int i = 0; i < numSamplesInInput; i++)
+        {
+            eq0.process(data[i], data[i]);
+            eq1.process(data[i], data[i]);
+            compressor0.process(data[i], data[i]);
+            compressor1.process(data[i], data[i]);
+            bitCrusher.process(data[i], data[i]);
+            chorus.process(data[i], data[i]);
+            delay.process(data[i], data[i]);
+        }
+        distortion.process(buffer);
     }
     // Stereo processing
     // This is essentially the mono version but doubled up for both channels

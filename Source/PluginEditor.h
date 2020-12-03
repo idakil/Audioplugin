@@ -14,7 +14,7 @@
 enum MyEnum
 {
     windowWidth = 600,
-    windowHeight = 600,
+    windowHeight = 800,
     panelHeight = windowHeight - 30,
     labelPosition = 15,
     sliderHeightMargin = 80
@@ -108,7 +108,7 @@ struct EqualiserContainer : public juce::Component {
         eqContainerFlex.items.add(juce::FlexItem(eqBandKnobs0).withFlex(1));
         eqContainerFlex.items.add(juce::FlexItem(eqBandKnobs1).withFlex(1));
 
-        setSize(windowWidth, panelHeight);
+        //setSize(windowWidth, panelHeight);
 
         eqContainerFlex.flexDirection = juce::FlexBox::Direction::column;
         eqContainerFlex.justifyContent = juce::FlexBox::JustifyContent::center;
@@ -154,6 +154,8 @@ struct CompressorContainer : public juce::Component {
         compContainerFlex.justifyContent = juce::FlexBox::JustifyContent::center;
     }
     void paint(juce::Graphics& g) override {
+        g.setColour(juce::Colours::black);
+        g.fillRect(compressorKnobs0.getX(), compressorKnobs0.getHeight() + 5, compressorKnobs0.getWidth(), 2);
     };
     void resized() override {
         compContainerFlex.performLayout(getLocalBounds().toFloat());
@@ -183,7 +185,6 @@ public:
     ConcertinaHeader(juce::String n)
         : juce::Component(n), name(n)
     {
-        //panelIcon = Icon(iconPath, Colours::white);
         nameLabel.setText(name, juce::dontSendNotification);
         nameLabel.setJustificationType(juce::Justification::centredLeft);
         nameLabel.setInterceptsMouseClicks(false, false);
@@ -195,22 +196,15 @@ public:
     void resized() override
     {
         auto b = getLocalBounds().toFloat();
-
-        iconBounds = b.removeFromLeft(b.getHeight()).reduced(7, 7);
-        arrowBounds = b.removeFromRight(b.getHeight());
         nameLabel.setBounds(b.toNearestInt());
     }
 
     void paint(juce::Graphics& g) override
     {
-        //g.setColour(findColour(defaultButtonBackgroundColourId));
+        g.setColour(juce::Colour(0xff2b123b));
         g.fillRoundedRectangle(getLocalBounds().reduced(2, 3).toFloat(), 2.0f);
 
         g.setColour(juce::Colours::white);
-        /* g.fillPath(arrowPath = ProjucerLookAndFeel::getArrowPath(arrowBounds,
-             getParentComponent()->getBoundsInParent().getY() == yPosition ? 2 : 0,
-             true, Justification::centred));*/
-
     }
 
     void mouseUp(const juce::MouseEvent& e) override
@@ -225,12 +219,6 @@ public:
 private:
     juce::String name;
     juce::Label nameLabel;
-
-    juce::Path iconPath;
-
-    juce::Rectangle<float> arrowBounds, iconBounds;
-    juce::Path arrowPath;
-
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ConcertinaHeader)
 };
 
@@ -266,30 +254,10 @@ struct EffectComponentContainer : public juce::Component, private juce::ChangeLi
             concertinaPanel.setCustomPanelHeader(p, h, false);
             concertinaPanel.setPanelHeaderSize(p, 30);
         }
-       /* addAndMakeVisible(concertinaPanel);
-        flexBox.items.add(juce::FlexItem(concertinaPanel).withMinHeight(10.0f).withFlex(1));
-
-        addAndMakeVisible(compressorKnobs0);
-        flexBox.items.add(juce::FlexItem(compressorKnobs0).withMinHeight(10.0f).withFlex(1));
-
-        addAndMakeVisible(compressorKnobs1);
-        flexBox.items.add(juce::FlexItem(compressorKnobs1).withMinHeight(10.0f).withFlex(1));
-
-        addAndMakeVisible(eqKnobs0);
-        flexBox.items.add(juce::FlexItem(eqKnobs0).withMinHeight(10.0f).withFlex(1));
-
-        addAndMakeVisible(eqKnobs1);
-        flexBox.items.add(juce::FlexItem(eqKnobs1).withMinHeight(10.0f).withFlex(1));
-
-        addAndMakeVisible(bitCrusherKnobs);
-        flexBox.items.add(juce::FlexItem(bitCrusherKnobs).withMinHeight(10.0f).withFlex(1));*/
-
+ 
         addAndMakeVisible(concertinaPanel);
-        //flexBox.items.add(juce::FlexItem(concertinaPanel).withMinHeight(10.0f).withFlex(1));
-
-        //flexBox.flexDirection = juce::FlexBox::Direction::column;
-        //flexBox.justifyContent = juce::FlexBox::JustifyContent::center;
-        concertinaPanel.setSize(windowWidth, panelHeight);
+        flexBox.items.add(juce::FlexItem(concertinaPanel).withFlex(1));
+        //concertinaPanel.setSize(windowWidth, panelHeight);
     }
 
     void changeListenerCallback(juce::ChangeBroadcaster* source) override
@@ -303,7 +271,7 @@ struct EffectComponentContainer : public juce::Component, private juce::ChangeLi
 
     void paint(juce::Graphics& g) override
     {
-        g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
+        g.fillAll(juce::Colour(0xffe7d1ff).withMultipliedBrightness(0.8));
     }
 
     void resized() override
@@ -326,8 +294,6 @@ struct MainView : public juce::AnimatedAppComponent, juce::Slider::Listener {
     : offsetSlider(juce::Slider::LinearHorizontal, juce::Slider::TextBoxRight)
     , speedSlider(juce::Slider::LinearHorizontal, juce::Slider::TextBoxRight)
     {
-        //p.compressor0.thresh = 0.1f;
-        juce::Logger::outputDebugString(std::to_string(p.compressor0.thresh));
 
         addAndMakeVisible(offsetSlider);
         offsetSlider.addListener(this);
@@ -405,14 +371,6 @@ struct MainView : public juce::AnimatedAppComponent, juce::Slider::Listener {
 
     void mouseDrag(const juce::MouseEvent& event) override
     {
-        /*
-        float midX = 300.0f / (event.getPosition().getX());
-        float midY = 200.0f / (event.getPosition().getY());
-
-        p.compressor0.changeParams(midX, midY);
-        Logger::outputDebugString(std::to_string(p.compressor0.threshParam->get()));
-        */
-
         circleX = event.getPosition().getX();
         circleY = event.getPosition().getY();
 

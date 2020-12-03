@@ -31,7 +31,7 @@ DistortionComponent::DistortionComponent(DistortionProcessor& processor)
 
 void DistortionComponent::paint(juce::Graphics& g)
 {
-    g.fillAll(juce::Colours::midnightblue.withMultipliedBrightness(.4));
+
 
     g.setColour(juce::Colours::beige);
 
@@ -75,7 +75,7 @@ ChorusComponent::ChorusComponent(ChorusProcessor& processor)
 
 void ChorusComponent::paint(juce::Graphics& g)
 {
-    g.fillAll(juce::Colours::midnightblue.withMultipliedBrightness(.4));
+
 
     g.setColour(juce::Colours::beige);
 
@@ -115,10 +115,8 @@ DelayComponent::DelayComponent(DelayProcessor& processor)
 
 void DelayComponent::paint(juce::Graphics& g)
 {
-    g.fillAll(juce::Colours::midnightblue.withMultipliedBrightness(.4));
 
     g.setColour(juce::Colours::beige);
-
     int labelW = 100;
     g.drawText("Thresh", delayLenghtSlider.getX() + delayLenghtSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, juce::Justification::centred);
     g.drawText("Slope", delayFeedbackSlider.getX() + delayFeedbackSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, juce::Justification::centred);
@@ -156,19 +154,19 @@ CompressorComponent::CompressorComponent(Compressor& comp)
 }
 
 void CompressorComponent::paint(juce::Graphics& g) {
-    g.fillAll(juce::Colours::midnightblue.withMultipliedBrightness(.4));
+
 
     g.setColour(juce::Colours::beige);
 
     int labelW = 100;
     g.drawText("Thresh", threshSlider.getX() + threshSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, juce::Justification::centred);
-    g.drawText("Slope", slopeSlider.getX() + slopeSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, juce::Justification::centred);
+    g.drawText("Ratio", slopeSlider.getX() + slopeSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, juce::Justification::centred);
     g.drawText("Attack", attackSlider.getX() + attackSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, juce::Justification::centred);
     g.drawText("Release", releaseSlider.getX() + releaseSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, juce::Justification::centred);
 };
 void CompressorComponent::resized() {
     int w = 100;
-    int y = 80;
+    int y = 45;
     auto bounds = getLocalBounds();
     threshSlider.setBounds(getWidth() / 5 - w/3 , y, w, getHeight() - sliderHeightMargin);
     slopeSlider.setBounds(2 * getWidth() / 5 - w /3 , y, w, getHeight() - sliderHeightMargin);
@@ -201,7 +199,7 @@ BitCrusherComponent::BitCrusherComponent(BitCrusher& bitCrusher)
 void BitCrusherComponent::paint(juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll(juce::Colours::midnightblue.withMultipliedBrightness(.4));
+
     g.setColour(juce::Colours::beige);
     int labelW = 100;
     g.drawText("Noise", noiseSlider.getX() + noiseSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, juce::Justification::centred);
@@ -233,6 +231,7 @@ EqBandComponent::EqBandComponent(Equaliser& eq)
     , gainAttachment(*eq.gainParam, gainSlider)
 {
 
+    freqSlider.setSkewFactorFromMidPoint(1000);
     header.setButtonText(eq.typeParam->getCurrentChoiceName());
     addAndMakeVisible(header);
     addAndMakeVisible(freqSlider);
@@ -250,7 +249,6 @@ EqBandComponent::EqBandComponent(Equaliser& eq)
 
 void EqBandComponent::paint(juce::Graphics& g)
 {
-    g.fillAll(juce::Colours::midnightblue.withMultipliedBrightness(.4));
     g.setColour(juce::Colours::beige);
     int labelW = 100;
     g.drawText("Freq", freqSlider.getX() + freqSlider.getWidth() / 2 - labelW / 2, 40, labelW, 20, juce::Justification::centred);
@@ -268,7 +266,7 @@ void EqBandComponent::resized()
     gainSlider.setBounds(3 * getWidth() / 4 - w / 2, y, w, getHeight() - sliderHeightMargin);
 
     auto headerFooterHeight = 25;
-    header.setBounds(0, 0, windowWidth, headerFooterHeight);
+    header.setBounds(0, 0, header.getParentWidth(), headerFooterHeight);
 
     //eqFlexBox.performLayout(bounds);
 }
@@ -280,11 +278,6 @@ AudiopluginAudioProcessorEditor::AudiopluginAudioProcessorEditor (AudiopluginAud
     valueTreeState(vts), 
     container(p),
     main(p)
-    /*compressorKnobs0(p.compressor0), 
-    compressorKnobs1(p.compressor1),
-    eqKnobs0(p.eq0), 
-    eqKnobs1(p.eq1), 
-    bitCrusherKnobs(p.bitCrusher)*/
 {
     setResizable(true, true);
     tabbedComponent.reset(new juce::TabbedComponent(juce::TabbedButtonBar::TabsAtTop));
@@ -293,7 +286,7 @@ AudiopluginAudioProcessorEditor::AudiopluginAudioProcessorEditor (AudiopluginAud
     tabbedComponent->addTab(TRANS("Perkelidy"), juce::Colour(0xffc483f2), &main, false);
     tabbedComponent->addTab(TRANS("Advanced"), juce::Colour(0xffc483f2), &container, false);
     tabbedComponent->setCurrentTabIndex(0);
-    tabbedComponent->setSize(windowWidth, windowHeight);
+    //tabbedComponent->setSize(windowWidth, windowHeight);
 
     setSize(windowWidth, windowHeight);
 }
@@ -305,6 +298,10 @@ AudiopluginAudioProcessorEditor::~AudiopluginAudioProcessorEditor()
 //==============================================================================
 void AudiopluginAudioProcessorEditor::paint (juce::Graphics& g)
 {
+    g.fillAll(juce::Colour(0xffb140f7));
+    getLookAndFeel().setColour(juce::Slider::thumbColourId, juce::Colour(0xff6500a3));
+    getLookAndFeel().setColour(juce::Slider::backgroundColourId, juce::Colours::beige);
+    getLookAndFeel().setColour(juce::Slider::trackColourId, juce::Colour(0xff6500a3));
 }
 
 void AudiopluginAudioProcessorEditor::resized()

@@ -6,9 +6,17 @@ struct Equaliser : public juce::AudioProcessorParameter::Listener {
 
     template <class AudioProcessorType>
     Equaliser(AudioProcessorType& processor, juce::String bandName, int defaultType, double& fs) : samplerate(fs) {
-        freqParam = new juce::AudioParameterFloat(bandName + "freq", bandName + " Freq", 20, 20000, 200);
-        qualParam = new juce::AudioParameterFloat(bandName + "qual", bandName + " Q", 0.1, 16, 0.707);
-        gainParam = new juce::AudioParameterFloat(bandName + "gain", bandName + " Gain", -30, 30, 0);
+        if (defaultType == 0) { //it's lowpass
+            freqParam = new juce::AudioParameterFloat(bandName + "freqlow", bandName + " Freq", juce::NormalisableRange<float>(20, 10000, 50), 200);
+            qualParam = new juce::AudioParameterFloat(bandName + "quallow", bandName + " Q", 0.1, 2.0f, 0.707);
+            gainParam = new juce::AudioParameterFloat(bandName + "gainlow", bandName + " Gain", -30, 30, 0);
+        }
+        else {
+            freqParam = new juce::AudioParameterFloat(bandName + "freqpeak", bandName + " Freq", 20, 20000, 200);
+            qualParam = new juce::AudioParameterFloat(bandName + "qualpeak", bandName + " Q", 0.1, 2.0f, 0.707);
+            gainParam = new juce::AudioParameterFloat(bandName + "gainpeak", bandName + " Gain", -30, 30, 0);
+        }
+
         typeParam = new juce::AudioParameterChoice(bandName + "type", bandName + " Type", { "Lowpass", "Peaking", }, defaultType);
 
         // Add the newly created parameters to the audio processor
@@ -51,51 +59,3 @@ struct Equaliser : public juce::AudioProcessorParameter::Listener {
     double& samplerate; // let's store a reference of samplerate that the AudioProcessor maintains
 
 };
-
-/*
-struct EqBandComponent : public Component
-{
-    EqBandComponent(FilterBand& band);
-
-    void paint(juce::Graphics& g) override;
-    void resized() override;
-
-    Slider freqSlider;
-    Slider qualSlider;
-    Slider gainSlider;
-    Label freqLabel, qualLabel, gainLabel;
-
-    SliderParameterAttachment freqAttachment;
-    SliderParameterAttachment qualAttachment;
-    SliderParameterAttachment gainAttachment;
-};
-
-class Equaliser : public Component, public ProcessorBase
-{
-public:
-	Equaliser(AudiopluginAudioProcessor&);
-    ~Equaliser() override;
-    void paint(juce::Graphics& g) {
-
-    };
-    void resized() {
-        auto bounds = getLocalBounds();
-        int h = bounds.getHeight() / 2;
-        bandKnobs0.setBounds(bounds.removeFromTop(h));
-        bandKnobs1.setBounds(bounds);
-    };
-    void showEqualiser() {
-        addAndMakeVisible(bandKnobs0);
-        addAndMakeVisible(bandKnobs1);
-        setSize(400, 300);
-    }
-    //void prepareToPlay(double sampleRate, int samplesPerBlock);
-    void processBlock(AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages);
-    void pluginParameters(int index, float parameter);
-private:
-    AudiopluginAudioProcessor& audioProcessor;
-    EqBandComponent bandKnobs0;
-    EqBandComponent bandKnobs1;
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Equaliser)
-};*/
