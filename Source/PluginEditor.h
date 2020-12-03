@@ -349,7 +349,7 @@ struct MainView : public juce::AnimatedAppComponent, juce::Slider::Listener {
 
     }
 
-    void sliderValueChanged(juce::Slider *slider)
+    void sliderValueChanged(juce::Slider *slider) override
     {
         circleOffset = offsetSlider.getValue();
         circleSpeed = speedSlider.getValue();
