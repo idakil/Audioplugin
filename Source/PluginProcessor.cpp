@@ -98,6 +98,7 @@ void AudiopluginAudioProcessor::changeProgramName (int index, const juce::String
 {
 }
 
+
 //==============================================================================
 void AudiopluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
@@ -143,10 +144,11 @@ void AudiopluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
             eq1.process(data[i], data[i]);
             compressor0.process(data[i], data[i]);
             compressor1.process(data[i], data[i]);
-            bitCrusher.process(data[i], data[i]);
             chorus.process(data[i], data[i]);
             delay.process(data[i], data[i]);
         }
+        bitCrusher.process(buffer);
+
         distortion.process(buffer);
     }
     // Stereo processing
@@ -164,10 +166,11 @@ void AudiopluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
             eq1.process(leftData[i], rightData[i]);
             compressor0.process(leftData[i], rightData[i]);
             compressor1.process(leftData[i], rightData[i]);
-            bitCrusher.process(leftData[i], rightData[i]);
             chorus.process(leftData[i], rightData[i]);
             delay.process(leftData[i], rightData[i]);
         }
+        bitCrusher.process(buffer);
+
         distortion.process(buffer);
     }
 }

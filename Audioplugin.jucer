@@ -4,6 +4,8 @@
               addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1">
   <MAINGROUP id="TUW7kz" name="Audioplugin">
     <GROUP id="{0D976D99-0CB0-3FE0-034B-54280EB31E69}" name="Source">
+      <FILE id="xxKtbY" name="pluginBackground.png" compile="0" resource="1"
+            file="Source/pluginBackground.png"/>
       <FILE id="OYwfam" name="biquad.hpp" compile="0" resource="0" file="Source/biquad.hpp"/>
       <FILE id="XNrAyN" name="BitCrusher.cpp" compile="1" resource="0" file="Source/BitCrusher.cpp"/>
       <FILE id="WiGZoz" name="BitCrusher.h" compile="0" resource="0" file="Source/BitCrusher.h"/>

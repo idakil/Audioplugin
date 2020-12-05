@@ -33,6 +33,7 @@ float Compressor::compressSample(float& data)
     gain = (1 - coeff) * gain + coeff * newGain;
 
     float compressedSample = gain * data;
+    compressedSample = compressedSample * wetDry;
     return compressedSample;
 }
 
@@ -56,10 +57,14 @@ float Compressor::interpolatePoints(float* xPoints, float* yPoints, float detect
 
 void Compressor::process(float& leftSample, float& rightSample) {
 
-    leftSample = compressSample(leftSample);
-    rightSample = compressSample(rightSample);
+    float leftWet = compressSample(leftSample);
+    float rightWet = compressSample(rightSample);
+    float leftDry = leftSample;
+    float rightDry = rightSample;
+    leftSample = wetDry * leftWet + (1 - wetDry) * leftDry;
+    rightSample = wetDry * rightWet + (1 - wetDry) * rightDry;
 }
-
+  
 void Compressor::prepare(int numChannels) {
     parameterValueChanged(NULL, NULL);
 }
@@ -70,6 +75,8 @@ void Compressor::parameterValueChanged(int, float)
     ratio = ratioParam->get();
     attack = attackParam->get();
     release = releaseParam->get();
+    gain = gainParam->get();
+    wetDry = wetDryParam->get();
 }
 
 /*

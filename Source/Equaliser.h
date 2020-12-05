@@ -7,15 +7,16 @@ struct Equaliser : public juce::AudioProcessorParameter::Listener {
     template <class AudioProcessorType>
     Equaliser(AudioProcessorType& processor, juce::String bandName, int defaultType, double& fs) : samplerate(fs) {
         if (defaultType == 0) { //it's lowpass
-            freqParam = new juce::AudioParameterFloat(bandName + "freqlow", bandName + " Freq", juce::NormalisableRange<float>(20, 10000, 50), 200);
+            freqParam = new juce::AudioParameterFloat(bandName + "freqlow", bandName + " Freq", juce::NormalisableRange<float>(20, 10000, 50), 2000);
             qualParam = new juce::AudioParameterFloat(bandName + "quallow", bandName + " Q", 0.1, 2.0f, 0.707);
             gainParam = new juce::AudioParameterFloat(bandName + "gainlow", bandName + " Gain", -30, 30, 0);
         }
         else {
-            freqParam = new juce::AudioParameterFloat(bandName + "freqpeak", bandName + " Freq", 20, 20000, 200);
+            freqParam = new juce::AudioParameterFloat(bandName + "freqpeak", bandName + " Freq", 20, 20000, 2000);
             qualParam = new juce::AudioParameterFloat(bandName + "qualpeak", bandName + " Q", 0.1, 2.0f, 0.707);
             gainParam = new juce::AudioParameterFloat(bandName + "gainpeak", bandName + " Gain", -30, 30, 0);
         }
+        wetDryParam = new juce::AudioParameterFloat(bandName + "wetdry", bandName + "wetdry", 0.0f, 1.0f, 0.5f);
 
         typeParam = new juce::AudioParameterChoice(bandName + "type", bandName + " Type", { "Lowpass", "Peaking", }, defaultType);
 
@@ -24,12 +25,15 @@ struct Equaliser : public juce::AudioProcessorParameter::Listener {
         processor.addParameter(qualParam);
         processor.addParameter(gainParam);
         processor.addParameter(typeParam);
+        processor.addParameter(wetDryParam);
 
         // register as listener
         freqParam->addListener(this);
         qualParam->addListener(this);
         gainParam->addListener(this);
         typeParam->addListener(this);
+        wetDryParam->addListener(this);
+
     }
 
     Equaliser() = delete;
@@ -53,9 +57,9 @@ struct Equaliser : public juce::AudioProcessorParameter::Listener {
     std::vector<Biquad<double>> biquads;
 
     // Parameters that the band needs
-    juce::AudioParameterFloat* freqParam, * qualParam, * gainParam;
+    juce::AudioParameterFloat* freqParam, * qualParam, * gainParam, * wetDryParam;
     juce::AudioParameterChoice* typeParam;
-
+    float wetDry;
     double& samplerate; // let's store a reference of samplerate that the AudioProcessor maintains
 
 };

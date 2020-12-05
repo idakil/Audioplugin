@@ -4,24 +4,13 @@
 
 void Equaliser::process(float& leftSample, float& rightSample){
     juce::ScopedNoDenormals noDenormals; // a boilerplate snippet from JUCE, potentially increases performance on some platforms
-
-    //const int numChannels = buffer.getNumChannels();
-    //const int numSamples = buffer.getNumSamples();
-
-            // for easier reading, copy the sample from io buffer
-            // this should be optimised by the compiler
-    //double sample;
-            // Replace sample with all bands, all bands run in series
-            // There's an array of Biquad objects inside each band, with the name biquad.
-            // A specific Biquad object per channel is then accessed with the [ch], and performFilter is called
-            // It takes a sample as an input, and returns a sample, that we replace our "sample" with.
-   leftSample = biquads[0].performFilter(leftSample);
-   rightSample = biquads[1].performFilter(rightSample);
-
-            // write back to io buffer
-            //channelData[i] = sample;
-        
     
+    float leftWet = biquads[0].performFilter(leftSample);
+    float rightWet = biquads[1].performFilter(rightSample);
+    float leftDry = leftSample;
+    float rightDry = rightSample;
+    leftSample = wetDry * leftWet + (1 - wetDry) * leftDry;
+    rightSample = wetDry * rightWet + (1 - wetDry) * rightDry;
 }
 
 void Equaliser::prepare(int numChannels)
@@ -39,6 +28,7 @@ void Equaliser::parameterValueChanged(int parameterIndex, float newValue)
     const float freq = freqParam->get();
     const float qual = qualParam->get();
     const float gain = gainParam->get();
+    wetDry = wetDryParam->get();
 
     const bool bandTypeChanged = (parameterIndex == typeParam->getParameterIndex());
 

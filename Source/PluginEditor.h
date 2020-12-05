@@ -17,8 +17,10 @@ enum MyEnum
     windowHeight = 800,
     panelHeight = windowHeight - 30,
     labelPosition = 15,
-    sliderHeightMargin = 80
+    sliderHeightMargin = 80,
 };
+
+
 //==============================================================================
 
 struct DelayComponent : public juce::Component {
@@ -73,6 +75,7 @@ struct ChorusComponent : public juce::Component {
     juce::FlexBox chorusFlexBox;
 };
 
+
 struct EqBandComponent : public juce::Component
 {
     EqBandComponent(Equaliser& eq);
@@ -82,10 +85,12 @@ struct EqBandComponent : public juce::Component
     juce::Slider freqSlider;
     juce::Slider qualSlider;
     juce::Slider gainSlider;
+    juce::Slider wetDrySlider;
 
     juce::SliderParameterAttachment freqAttachment;
     juce::SliderParameterAttachment qualAttachment;
     juce::SliderParameterAttachment gainAttachment;
+    juce::SliderParameterAttachment wetDryAttachment;
 
     juce::FlexBox eqFlexBox;
     juce::TextButton header;
@@ -125,9 +130,9 @@ struct CompressorComponent : public juce::Component {
     void paint(juce::Graphics& g) override;
     void resized() override;
 
-    juce::Slider threshSlider, slopeSlider, attackSlider, releaseSlider;
-    juce::Label threshLabel, slopeLabel, attackLabel, releaseLabel;
-    juce::SliderParameterAttachment threshAttachment, slopeAttachment, attackAttachment, releaseAttachment;
+    juce::Slider threshSlider, slopeSlider, attackSlider, releaseSlider, gainSlider, wetDrySlider;
+    juce::Label threshLabel, slopeLabel, attackLabel, releaseLabel, gainLabel;
+    juce::SliderParameterAttachment threshAttachment, slopeAttachment, attackAttachment, releaseAttachment, gainAttachment, wetDryAttachment;
     juce::FlexBox compressorFlexBox;
 };
 
@@ -166,8 +171,8 @@ struct BitCrusherComponent : public juce::Component {
     void paint(juce::Graphics& g) override;
     void resized() override;
 
-    juce::Slider bitReduxSlider, rateReduxSlider, noiseSlider;
-    juce::SliderParameterAttachment bitReduxAttachment, rateReduxAttachment, noiseAttachment;
+    juce::Slider bitReduxSlider, rateReduxSlider, noiseSlider, wetDrySlider;
+    juce::SliderParameterAttachment bitReduxAttachment, rateReduxAttachment, noiseAttachment, wetDryAttachment;
     juce::FlexBox bitCrusherFlexBox;
 };
 //==============================================================================
@@ -317,7 +322,9 @@ struct MainView : public juce::AnimatedAppComponent, juce::Slider::Listener {
 
     void paint(juce::Graphics& g) override
     {
-        g.fillAll(juce::Colours::goldenrod);
+        juce::Image myImage = juce::ImageFileFormat::loadFrom(BinaryData::pluginBackground_png, BinaryData::pluginBackground_pngSize);
+        g.drawImageAt(myImage, 0, 0, true);
+        //g.fillAll(juce::Colours::goldenrod);
 
         auto arcLenght = 15;
         int radius = 15 + getHeight() * 0.01;
