@@ -45,15 +45,9 @@ struct DistortionComponent : public juce::Component {
     void resized() override;
 
     juce::Slider thresholdSlider;
-    juce::Slider ratioSlider;
-    juce::Slider attackSlider;
-    juce::Slider releaseSlider;
     juce::Slider saturationSlider;
 
     juce::SliderParameterAttachment thresholdAttachment;
-    juce::SliderParameterAttachment ratioAttachment;
-    juce::SliderParameterAttachment attackAttachment;
-    juce::SliderParameterAttachment releaseAttachment;
     juce::SliderParameterAttachment saturationAttachment;
 
     juce::FlexBox distortionFlexBox;

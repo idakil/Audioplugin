@@ -3,43 +3,26 @@
 
 DistortionComponent::DistortionComponent(DistortionProcessor& processor)
     : thresholdSlider(juce::Slider::RotaryVerticalDrag, juce::Slider::TextBoxBelow)
-    , ratioSlider(juce::Slider::RotaryVerticalDrag, juce::Slider::TextBoxBelow)
-    , attackSlider(juce::Slider::RotaryVerticalDrag, juce::Slider::TextBoxBelow)
-    , releaseSlider(juce::Slider::RotaryVerticalDrag, juce::Slider::TextBoxBelow)
     , saturationSlider(juce::Slider::RotaryVerticalDrag, juce::Slider::TextBoxBelow)
     , thresholdAttachment(*processor.thresholdParam, thresholdSlider)
-    , ratioAttachment(*processor.ratioParam, ratioSlider)
-    , attackAttachment(*processor.attackParam, attackSlider)
-    , releaseAttachment(*processor.releaseParam, releaseSlider)
     , saturationAttachment(*processor.saturationParam, saturationSlider)
 {
 
     const juce::FlexItem::Margin margin = juce::FlexItem::Margin(25.0f, 0.0f, 20.0f, 0.0f);
 
     addAndMakeVisible(thresholdSlider);
-    addAndMakeVisible(ratioSlider);
-    addAndMakeVisible(attackSlider);
-    addAndMakeVisible(releaseSlider);
     addAndMakeVisible(saturationSlider);
 
     distortionFlexBox.items.add(juce::FlexItem(thresholdSlider).withFlex(1).withMargin(margin));
-    distortionFlexBox.items.add(juce::FlexItem(ratioSlider).withFlex(1).withMargin(margin));
-    distortionFlexBox.items.add(juce::FlexItem(attackSlider).withFlex(1).withMargin(margin));
-    distortionFlexBox.items.add(juce::FlexItem(releaseSlider).withFlex(1).withMargin(margin));
     distortionFlexBox.items.add(juce::FlexItem(saturationSlider).withFlex(1).withMargin(margin));
 }
 
 void DistortionComponent::paint(juce::Graphics& g)
 {
-
-
     g.setColour(juce::Colours::beige);
 
     int labelW = 100;
     g.drawText("Threshold", thresholdSlider.getX() + thresholdSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, juce::Justification::centred);
-    g.drawText("Ratio??", ratioSlider.getX() + ratioSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, juce::Justification::centred);
-    g.drawText("Attack", attackSlider.getX() + attackSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, juce::Justification::centred);
-    g.drawText("Release", releaseSlider.getX() + releaseSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, juce::Justification::centred);
     g.drawText("Saturation", saturationSlider.getX() + saturationSlider.getWidth() / 2 - labelW / 2, labelPosition, labelW, 20, juce::Justification::centred);
 }
 
@@ -110,6 +93,7 @@ DelayComponent::DelayComponent(DelayProcessor& processor)
 
     delayLenghtSlider.setTextValueSuffix(" ms");
     delayFeedbackSlider.setTextValueSuffix(" ms");
+    delayWetDryMixSlider.setTextValueSuffix(" %");
 
     delayFlexBox.items.add(juce::FlexItem(delayLenghtSlider).withFlex(1).withMargin(margin));
     delayFlexBox.items.add(juce::FlexItem(delayFeedbackSlider).withFlex(1).withMargin(margin));

@@ -117,8 +117,7 @@ void AudiopluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
 
 void AudiopluginAudioProcessor::releaseResources()
 {
-    // When playback stops, you can use this as an opportunity to free up any
-    // spare memory, etc.
+    distortion.reset();
 }
 
 

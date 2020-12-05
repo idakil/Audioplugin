@@ -13,14 +13,17 @@ void DistortionProcessor::prepareToPlay(double samplerate, int samplesPerBlock, 
     juce::dsp::ProcessSpec spec{ samplerate, (juce::uint32) samplesPerBlock, (juce::uint32) totalNumInputChannel };
     processorChain.prepare(spec);
 
+    parameterValueChanged(NULL, NULL);
+    processorChain.get<compressorIndex>().setRatio(4);
+    processorChain.get<compressorIndex>().setAttack(12);
+    processorChain.get<compressorIndex>().setRelease(150);
+
     auto& waveshaper = processorChain.get<waveshaperIndex>();
 
     waveshaper.functionToUse = [](float x)
     {
         return std::tanh(x);
     };
-
-    parameterValueChanged(NULL, NULL);
 }
 
 void DistortionProcessor::process(juce::AudioBuffer<float>& buffer)
@@ -36,9 +39,6 @@ void DistortionProcessor::parameterValueChanged(int, float)
     const float saturationGain = saturationParam->get();;
 
     processorChain.get<preSaturationGainIndex>().setGainLinear(saturationGain);
-    processorChain.get<postSaturationGainIndex>().setGainLinear(1.0f / saturationGain);
+    processorChain.get<postSaturationGainIndex>().setGainLinear(1.0f / (saturationGain * 0.2f));
     processorChain.get<compressorIndex>().setThreshold(thresholdParam->get());
-    processorChain.get<compressorIndex>().setRatio(ratioParam->get());
-    processorChain.get<compressorIndex>().setAttack(attackParam->get());
-    processorChain.get<compressorIndex>().setRelease(releaseParam->get());
 }

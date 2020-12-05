@@ -33,6 +33,8 @@ void ChorusProcessor::process(float& leftSample, float& rightSample)
 
     prevLeftDelayedSample = leftWetSample;
     prevRightDelayedSample = rightWetSample;
+
+    parameterValueChanged(NULL, NULL);
 }
 
 void ChorusProcessor::prepareToPlay(double sampleRate)

@@ -16,9 +16,10 @@ struct DelayProcessor : public juce::AudioProcessorParameter::Listener {
     template <class AudioProcessorType>
     DelayProcessor(AudioProcessorType& processor, double& fs) : samplerate(fs)
     {
-        lenghtParam = new juce::AudioParameterFloat("delay_lenght", "Delay Lenght (ms)", 0.01f, 0.50f, 0.10f);
+        //lenghtParam = new juce::AudioParameterFloat("delay_lenght", "Delay Lenght (ms)", 0.01f, 0.50f, 0.10f);
+        lenghtParam = new juce::AudioParameterFloat("delay_lenght", "Delay Lenght (ms)", 1.0f, 100.0f, 1.0f);
         feedbackParam = new juce::AudioParameterFloat("delay_feedback", "Delay Feedback Amount", 0.0f, 1.0f, 0.1f);
-        wetDryMixParam = new juce::AudioParameterFloat("delay_wetdry", "Chorus Wet Dry Mix", 0.0f, 1.0f, 0.5f);
+        wetDryMixParam = new juce::AudioParameterFloat("delay_wetdry", "Chorus Wet Dry Mix", 0.0f, 100.0f, 50.0f);
 
         processor.addParameter(lenghtParam);
         processor.addParameter(feedbackParam);

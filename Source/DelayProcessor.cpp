@@ -30,15 +30,19 @@ void DelayProcessor::prepareToPlay(double sampleRate)
     // These will be used for feedback, initialise to zero
     prevLeftDelayedSample = 0;
     prevRightDelayedSample = 0;
+
+    parameterValueChanged(NULL, NULL);
 }
 
 void DelayProcessor::process(float& leftSample, float& rightSample)
 {
     const float defaultModulation = 1.0;
     const float maxAmplitudeInSeconds = defaultModulation / 1000;
+    const float wetDry = wetDryMix / 100.0f;
+    const float lenght = delayLenght / 100.0f;
 
-    float leftDelayInSamples = delayLenght * samplerate;
-    float rightDelayInSamples = delayLenght * samplerate;
+    float leftDelayInSamples = lenght * samplerate;
+    float rightDelayInSamples = lenght * samplerate;
 
     leftDelayLine->pushSample(leftSample + prevLeftDelayedSample * feedbackAmount);
     rightDelayLine->pushSample(rightSample + prevRightDelayedSample * feedbackAmount);
@@ -49,8 +53,8 @@ void DelayProcessor::process(float& leftSample, float& rightSample)
     float leftDrySample = leftSample;
     float rightDrySample = rightSample;
 
-    leftSample = wetDryMix * leftWetSample + (1 - wetDryMix) * leftDrySample;
-    rightSample = wetDryMix * rightWetSample + (1 - wetDryMix) * rightDrySample;
+    leftSample = wetDry * leftWetSample + (1 - wetDry) * leftDrySample;
+    rightSample = wetDry * rightWetSample + (1 - wetDry) * rightDrySample;
 
     prevLeftDelayedSample = leftWetSample;
     prevRightDelayedSample = rightWetSample;
