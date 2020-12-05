@@ -41,6 +41,7 @@ struct Equaliser : public juce::AudioProcessorParameter::Listener {
     void prepare(int numChannels);
     void process(float& leftSample, float& rightSample);
 
+
     // This function is called when values change
     // We don't actually need the parameterIndex and newValue here, so commenting the names out removes "parameter unused" compiler warning
     void parameterValueChanged(int /* parameterIndex */, float /* newValue */) override;

@@ -30,7 +30,7 @@ void Equaliser::parameterValueChanged(int parameterIndex, float newValue)
     qual = qualParam->get();
     gain = gainParam->get();
     wetDry = wetDryParam->get();
-    
+
     const bool bandTypeChanged = (parameterIndex == typeParam->getParameterIndex());
 
     if (typeParam->getIndex() == 0)

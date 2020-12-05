@@ -235,6 +235,15 @@ void BitCrusher::process(juce::AudioBuffer<float>& buffer) {
 }
 
 
+void BitCrusher::parameterValueChanged(int, float)
+{
+    noise = noiseParam->get();
+    bitRedux = bitReduxParam->get();
+    rateRedux = rateReduxParam->get();
+    wetDry = wetDryParam->get();
+    juce::Logger::outputDebugString(std::to_string(bitRedux));
+}
+
 /*
 void BitCrusher::process(float& leftSample, float& rightSample, const int& numSamples, const int& numChannels) {
     juce::ScopedNoDenormals noDenormals;
@@ -282,10 +291,3 @@ void BitCrusher::process(float& leftSample, float& rightSample, const int& numSa
 */
 
 
-void BitCrusher::parameterValueChanged(int, float)
-{
-    noise = noiseParam->get();
-    bitRedux = bitReduxParam->get();
-    rateRedux = rateReduxParam->get();
-    wetDry = wetDryParam->get();
-}
