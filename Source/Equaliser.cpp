@@ -25,11 +25,12 @@ void Equaliser::prepare(int numChannels)
 // This function is called when values change
 void Equaliser::parameterValueChanged(int parameterIndex, float newValue)
 {
-    const float freq = freqParam->get();
-    const float qual = qualParam->get();
-    const float gain = gainParam->get();
-    wetDry = wetDryParam->get();
 
+    freq = freqParam->get();
+    qual = qualParam->get();
+    gain = gainParam->get();
+    wetDry = wetDryParam->get();
+    
     const bool bandTypeChanged = (parameterIndex == typeParam->getParameterIndex());
 
     if (typeParam->getIndex() == 0)

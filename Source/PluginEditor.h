@@ -292,6 +292,7 @@ struct MainView : public juce::AnimatedAppComponent, juce::Slider::Listener {
     MainView(AudiopluginAudioProcessor& p) 
     : offsetSlider(juce::Slider::LinearHorizontal, juce::Slider::TextBoxRight)
     , speedSlider(juce::Slider::LinearHorizontal, juce::Slider::TextBoxRight)
+    , p(p)
     {
 
         addAndMakeVisible(offsetSlider);
@@ -323,7 +324,7 @@ struct MainView : public juce::AnimatedAppComponent, juce::Slider::Listener {
     void paint(juce::Graphics& g) override
     {
         juce::Image myImage = juce::ImageFileFormat::loadFrom(BinaryData::pluginBackground_png, BinaryData::pluginBackground_pngSize);
-        g.drawImageAt(myImage, 0, 0, true);
+        g.drawImageWithin(myImage, 0, 0, getParentWidth(), getParentHeight(), juce::RectanglePlacement::stretchToFit, false);
         //g.fillAll(juce::Colours::goldenrod);
 
         auto arcLenght = 15;
@@ -362,10 +363,29 @@ struct MainView : public juce::AnimatedAppComponent, juce::Slider::Listener {
         g.setColour(juce::Colours::white);
         g.drawLine(0, circleY, getWidth(), circleY);
         g.drawLine(circleX, 0, circleX, getHeight());
+        // 1. Vibes only 2. The Garage 3. Spacy 4. Bitter
+        g.setColour(juce::Colours::aqua);
+
+        g.drawText("Vibes only", 10, 5, 100, 20, juce::Justification::centred); //topleft
+        g.drawText("The Garage", getWidth()-100, 20, 100, 20, juce::Justification::centred); //topright
+        g.drawText("Spacy", 20, getHeight() - 30, 100, 20, juce::Justification::centred);
+        g.drawText("Bitter", getWidth()-100, getHeight() - 30, 100, 20, juce::Justification::centred);
+
+        g.setColour(juce::Colours::aqua);
+        g.fillRect(vibesArea);
+        g.fillRect(garageArea);
+        g.fillRect(spacyArea);
+        g.fillRect(bitterArea);
+
     }
 
     void resized() override
     {
+        vibesArea.setBounds(0, 0, getWidth() / 20, getHeight() / 20);
+        garageArea.setBounds(getWidth() - getWidth() / 20, 0, getWidth() / 20, getHeight() / 20);
+        spacyArea.setBounds(0, getHeight() - getHeight() / 20, getWidth() / 20, getHeight() / 20);
+        bitterArea.setBounds(getWidth() - getWidth() / 20, getHeight() - getHeight() / 20, getWidth() / 20, getHeight() / 20);
+
         offsetSlider.setBounds(0, getHeight() - 100, getWidth(), 50);
         speedSlider.setBounds(0, getHeight() - 50, getWidth(), 50);
     }
@@ -374,19 +394,27 @@ struct MainView : public juce::AnimatedAppComponent, juce::Slider::Listener {
     {
         circleX = event.getPosition().getX();
         circleY = event.getPosition().getY();
-
+        if (circleX < vibesArea.getBottomRight().getX() && circleY< vibesArea.getBottomRight().getY()) {
+            p.eq0.freq=6000;
+        }
     }
 
-    AudiopluginAudioProcessor p;
+    AudiopluginAudioProcessor& p;
+    juce::Array<float> peakParams = { 6000, 0.1, 0, 0 };
+    juce::Array<float> lowpassParams = { 6000, 0.1, 0, 1 };
 
     float circleX = 50.0f;
     float circleY = 50.0f;
 
     float circleOffset = 0.16f;
     float circleSpeed = 0.04f;
-
     juce::Slider offsetSlider;
     juce::Slider speedSlider;
+
+    juce::Rectangle<float> vibesArea;
+    juce::Rectangle<float> garageArea;
+    juce::Rectangle<float> spacyArea;
+    juce::Rectangle<float> bitterArea;
 };
 
 class AudiopluginAudioProcessorEditor  : public juce::AudioProcessorEditor

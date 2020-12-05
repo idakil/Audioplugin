@@ -59,7 +59,7 @@ struct Equaliser : public juce::AudioProcessorParameter::Listener {
     // Parameters that the band needs
     juce::AudioParameterFloat* freqParam, * qualParam, * gainParam, * wetDryParam;
     juce::AudioParameterChoice* typeParam;
-    float wetDry;
+    float wetDry, freq, qual, gain;
     double& samplerate; // let's store a reference of samplerate that the AudioProcessor maintains
 
 };
