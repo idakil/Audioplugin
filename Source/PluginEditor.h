@@ -364,12 +364,12 @@ struct MainView : public juce::AnimatedAppComponent, juce::Slider::Listener {
         g.drawLine(0, circleY, getWidth(), circleY);
         g.drawLine(circleX, 0, circleX, getHeight());
         // 1. Vibes only 2. The Garage 3. Spacy 4. Bitter
-        g.setColour(juce::Colours::aqua);
-
-        g.drawText("Vibes only", 10, 5, 100, 20, juce::Justification::centred); //topleft
-        g.drawText("The Garage", getWidth()-100, 20, 100, 20, juce::Justification::centred); //topright
-        g.drawText("Spacy", 20, getHeight() - 30, 100, 20, juce::Justification::centred);
-        g.drawText("Bitter", getWidth()-100, getHeight() - 30, 100, 20, juce::Justification::centred);
+        g.setColour(juce::Colours::white);
+        g.setFont(18.0f);
+        g.drawText("Vibes only", 10, 5, 100, 20, juce::Justification::topLeft); //topleft
+        g.drawText("The Garage", getWidth()-110, 5, 100, 20, juce::Justification::topRight); //topright
+        g.drawText("Spacy", 10, getHeight() - 25, 100, 20, juce::Justification::topLeft);
+        g.drawText("Bitter", getWidth()-110, getHeight() - 25, 100, 20, juce::Justification::topRight);
 
         //g.drawText(std::to_string(leftRatio), getWidth() / 2, getHeight() / 2, 100, 200, juce::Justification::centred);
 

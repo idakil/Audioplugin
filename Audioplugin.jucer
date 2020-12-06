@@ -4,6 +4,7 @@
               addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1">
   <MAINGROUP id="TUW7kz" name="Audioplugin">
     <GROUP id="{0D976D99-0CB0-3FE0-034B-54280EB31E69}" name="Source">
+      <FILE id="fo5yOC" name="Presets.h" compile="0" resource="0" file="Source/Presets.h"/>
       <FILE id="xxKtbY" name="pluginBackground.png" compile="0" resource="1"
             file="Source/pluginBackground.png"/>
       <FILE id="OYwfam" name="biquad.hpp" compile="0" resource="0" file="Source/biquad.hpp"/>
