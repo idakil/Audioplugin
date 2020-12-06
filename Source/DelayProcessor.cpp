@@ -66,3 +66,8 @@ void DelayProcessor::parameterValueChanged(int, float)
     wetDryMix = wetDryMixParam->get();
     feedbackAmount = feedbackParam->get();
 }
+
+void DelayProcessor::setMouse(int x, int y)
+{
+    delayLenght = x * 0.5f;
+}

@@ -442,21 +442,20 @@ private:
 
 struct MainView : public juce::AnimatedAppComponent, juce::Slider::Listener {
 
-    MainView(AudiopluginAudioProcessor& p) 
+    MainView(AudiopluginAudioProcessor& p)
     : offsetSlider(juce::Slider::LinearHorizontal, juce::Slider::TextBoxRight)
     , speedSlider(juce::Slider::LinearHorizontal, juce::Slider::TextBoxRight)
-    , p(p)
+    , pro(p)
     {
+        //addAndMakeVisible(offsetSlider);
+        //offsetSlider.addListener(this);
+        //offsetSlider.setRange(0.01, 1.0, 0.01);
+        //offsetSlider.setValue(circleOffset);
 
-        addAndMakeVisible(offsetSlider);
-        offsetSlider.addListener(this);
-        offsetSlider.setRange(0.01, 1.0, 0.01);
-        offsetSlider.setValue(circleOffset);
-
-        addAndMakeVisible(speedSlider);
-        speedSlider.addListener(this);
-        speedSlider.setRange(0.01, 1.0, 0.01);
-        speedSlider.setValue(circleSpeed);
+        //addAndMakeVisible(speedSlider);
+        //speedSlider.addListener(this);
+        //speedSlider.setRange(0.01, 1.0, 0.01);
+        //speedSlider.setValue(circleSpeed);
 
         setFramesPerSecond(60);
 
@@ -476,7 +475,7 @@ struct MainView : public juce::AnimatedAppComponent, juce::Slider::Listener {
 
     void paint(juce::Graphics& g) override
     {
-        juce::Image myImage = juce::ImageFileFormat::loadFrom(BinaryData::pluginBackground_png, BinaryData::pluginBackground_pngSize);
+        
         g.drawImageWithin(myImage, 0, 0, getParentWidth(), getParentHeight(), juce::RectanglePlacement::stretchToFit, false);
         //g.fillAll(juce::Colours::goldenrod);
 
@@ -506,7 +505,6 @@ struct MainView : public juce::AnimatedAppComponent, juce::Slider::Listener {
                 arc1.lineTo(p1);
                 arc2.lineTo(p2);
             }
-                
         }
 
         g.setColour(juce::Colours::deeppink);
@@ -524,13 +522,14 @@ struct MainView : public juce::AnimatedAppComponent, juce::Slider::Listener {
         g.drawText("Spacy", 20, getHeight() - 30, 100, 20, juce::Justification::centred);
         g.drawText("Bitter", getWidth()-100, getHeight() - 30, 100, 20, juce::Justification::centred);
 
+        //g.drawText(std::to_string(leftRatio), getWidth() / 2, getHeight() / 2, 100, 200, juce::Justification::centred);
+
         g.setColour(juce::Colours::aqua);
         g.fillRect(vibesArea);
         g.fillRect(garageArea);
         g.fillRect(spacyArea);
         g.fillRect(bitterArea);
-
-        bitr.attachToParameter(p.bitCrusher.bitReduxParam);
+        //bitr.attachToParameter(p.bitCrusher.bitReduxParam);
     }
 
     void resized() override
@@ -549,14 +548,58 @@ struct MainView : public juce::AnimatedAppComponent, juce::Slider::Listener {
         circleX = event.getPosition().getX();
         circleY = event.getPosition().getY();
 
-        bitr.beginGesture();
+        //bitr.beginGesture();
 
-        if (circleX < vibesArea.getBottomRight().getX() && circleY< vibesArea.getBottomRight().getY()) {
-            bitr.setValue(4.5);
-        }
+        //if (circleX < vibesArea.getBottomRight().getX() && circleY< vibesArea.getBottomRight().getY()) {
+        //    bitr.setValue(4.5);
+        //}
+
+        rightRatio = (float) event.getPosition().getX() / (float) getWidth();
+        leftRatio = 1.0f - rightRatio;
+
+        bottomRatio = (float) event.getPosition().getY() / (float) getHeight();
+        topRatio = 1.0f - bottomRatio;
+
+        *pro.eq0.freqParam = leftRatio * topRatio * 6000.0f + rightRatio * topRatio * 1960.0f + leftRatio * bottomRatio * 5000.0f + rightRatio * bottomRatio * 0.0f;
+        *pro.eq0.gainParam = leftRatio * topRatio * 0.0f + rightRatio * topRatio * 8.0f + leftRatio * bottomRatio * 30.0f + rightRatio * bottomRatio * 0.0f;
+        *pro.eq0.qualParam = leftRatio * topRatio * 0.1f + rightRatio * topRatio * 0.43f + leftRatio * bottomRatio * 0.1f + rightRatio * bottomRatio * 0.0f;
+        *pro.eq0.wetDryParam = leftRatio * topRatio * 0.0f + rightRatio * topRatio * 1.0f + leftRatio * bottomRatio * 1.0f + rightRatio * bottomRatio * 0.0f;
+
+        *pro.eq1.freqParam = leftRatio * topRatio * 6000.0f + rightRatio * topRatio * 8320.0f + leftRatio * bottomRatio * 8320.0f + rightRatio * bottomRatio * 0.0f;
+        *pro.eq1.gainParam = leftRatio * topRatio * 0.0f + rightRatio * topRatio * 0.0f + leftRatio * bottomRatio * 0.0f + rightRatio * bottomRatio * 0.0f;
+        *pro.eq1.qualParam = leftRatio * topRatio * 0.1f + rightRatio * topRatio * 1.6f + leftRatio * bottomRatio * 1.6f + rightRatio * bottomRatio * 0.0f;
+        *pro.eq1.wetDryParam = leftRatio * topRatio * 1.0f + rightRatio * topRatio * 1.0f + leftRatio * bottomRatio * 0.0f + rightRatio * bottomRatio * 0.0f;
+
+        *pro.compressor0.attackParam = leftRatio * topRatio * 10.0f + rightRatio * topRatio * 6.0f + leftRatio * bottomRatio * 6.0f + rightRatio * bottomRatio * 0.0f;
+        //*pro.compressor0.gainParam;
+        *pro.compressor0.ratioParam = leftRatio * topRatio * 6.0f + rightRatio * topRatio * 7.0f + leftRatio * bottomRatio * 7.0f + rightRatio * bottomRatio * 0.0f;
+        *pro.compressor0.releaseParam = leftRatio * topRatio * 200.0f + rightRatio * topRatio * 30.0f + leftRatio * bottomRatio * 30.0f + rightRatio * bottomRatio * 0.0f;
+        //*pro.compressor0.wetDryParam;
+        *pro.compressor0.threshParam = leftRatio * topRatio * -20.0f + rightRatio * topRatio * -12.0f + leftRatio * bottomRatio * -12.0f + rightRatio * bottomRatio * 0.0f;
+
+        *pro.compressor1.attackParam = leftRatio * topRatio * 20.0f + rightRatio * topRatio * 30.0f + leftRatio * bottomRatio * 30.0f + rightRatio * bottomRatio * 0.0f;
+        //*pro.compressor1.gainParam = leftRatio * topRatio * -20.0f + rightRatio * topRatio * 12.0f + leftRatio * bottomRatio * -12.0f + rightRatio * bottomRatio * 0.0f;
+        *pro.compressor1.ratioParam = leftRatio * topRatio * 2.0f + rightRatio * topRatio * 12.0f + leftRatio * bottomRatio * 12.0f + rightRatio * bottomRatio * 0.0f;
+        *pro.compressor1.releaseParam = leftRatio * topRatio * 200.0f + rightRatio * topRatio * 200.0f + leftRatio * bottomRatio * 200.0f + rightRatio * bottomRatio * 0.0f;
+        //*pro.compressor1.wetDryParam;
+        *pro.compressor1.threshParam = leftRatio * topRatio * -12.0f + rightRatio * topRatio * -10.0f + leftRatio * bottomRatio * -10.0f + rightRatio * bottomRatio * 0.0f;
+
+        *pro.delay.feedbackParam = leftRatio * topRatio * 0.2f + rightRatio * topRatio * 0.2f + leftRatio * bottomRatio * 0.2f + rightRatio * bottomRatio * 0.0f;
+        *pro.delay.wetDryMixParam = leftRatio * topRatio * 40.0f + rightRatio * topRatio * 20.0f + leftRatio * bottomRatio * 0.0f + rightRatio * bottomRatio * 0.0f; 
+        *pro.delay.lenghtParam = leftRatio * topRatio * 15.0f + rightRatio * topRatio * 3.0f + leftRatio * bottomRatio * 3.0f + rightRatio * bottomRatio * 0.0f;
+
+        *pro.chorus.lenghtParam = leftRatio * topRatio * 0.04f + rightRatio * topRatio * 0.01f + leftRatio * bottomRatio * 0.01f + rightRatio * bottomRatio * 0.0f;
+        *pro.chorus.lfoSpeedParam = leftRatio * topRatio * 3.0f + rightRatio * topRatio * 0.0f + leftRatio * bottomRatio * 0.0f + rightRatio * bottomRatio * 0.0f;
+        *pro.chorus.modAmountParam = leftRatio * topRatio * 0.2f + rightRatio * topRatio * 0.0f + leftRatio * bottomRatio * 0.0f + rightRatio * bottomRatio * 0.0f;
+
+        *pro.distortion.saturationParam = leftRatio * topRatio * 5.0f + rightRatio * topRatio * 13.0f + leftRatio * bottomRatio * 4.0f + rightRatio * bottomRatio * 0.0f;
+        *pro.distortion.thresholdParam = leftRatio* topRatio * 0.0f + rightRatio * topRatio * 0.0f + leftRatio * bottomRatio * -20.0f + rightRatio * bottomRatio * 0.0f;
+
+        *pro.bitCrusher.bitReduxParam = leftRatio * topRatio * 32.0f + rightRatio * topRatio * 32.0f + leftRatio * bottomRatio * 8.0f + rightRatio * bottomRatio * 0.0f;
+        *pro.bitCrusher.noiseParam = leftRatio * topRatio * 0.0f + rightRatio * topRatio * 0.0f + leftRatio * bottomRatio * 30.0f + rightRatio * bottomRatio * 0.0f;
+        *pro.bitCrusher.rateReduxParam = leftRatio * topRatio * 1.0f + rightRatio * topRatio * 1.0f + leftRatio * bottomRatio * 40.0f + rightRatio * bottomRatio * 0.0f;
+        *pro.bitCrusher.wetDryParam = leftRatio * topRatio * 0.5f + rightRatio * topRatio * 0.5f + leftRatio * bottomRatio * 0.5f + rightRatio * bottomRatio * 0.5f;
     }
-
-    AudiopluginAudioProcessor& p;
 
     ParameterAttachment<float> bitr;
 
@@ -571,10 +614,19 @@ struct MainView : public juce::AnimatedAppComponent, juce::Slider::Listener {
     juce::Slider offsetSlider;
     juce::Slider speedSlider;
 
+    float rightRatio = 0.0f;
+    float leftRatio = 0.0f;
+    float bottomRatio = 0.0f;
+    float topRatio = 0.0f;
+
     juce::Rectangle<float> vibesArea;
     juce::Rectangle<float> garageArea;
     juce::Rectangle<float> spacyArea;
     juce::Rectangle<float> bitterArea;
+
+    AudiopluginAudioProcessor& pro;
+
+    juce::Image myImage = juce::ImageFileFormat::loadFrom(BinaryData::pluginBackground_png, BinaryData::pluginBackground_pngSize);
 };
 
 class AudiopluginAudioProcessorEditor  : public juce::AudioProcessorEditor

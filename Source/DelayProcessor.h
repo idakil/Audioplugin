@@ -38,6 +38,8 @@ struct DelayProcessor : public juce::AudioProcessorParameter::Listener {
     void parameterValueChanged(int /* parameterIndex */, float /* newValue */) override;
     void parameterGestureChanged(int parameterIndex, bool gestureIsStarting) override {}
 
+    void setMouse(int x, int y);
+
     juce::AudioParameterFloat* lenghtParam;
     juce::AudioParameterFloat* feedbackParam;
     juce::AudioParameterFloat* wetDryMixParam;
