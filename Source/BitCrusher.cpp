@@ -241,7 +241,6 @@ void BitCrusher::parameterValueChanged(int, float)
     bitRedux = bitReduxParam->get();
     rateRedux = rateReduxParam->get();
     wetDry = wetDryParam->get();
-    juce::Logger::outputDebugString(std::to_string(bitRedux));
 }
 
 /*
