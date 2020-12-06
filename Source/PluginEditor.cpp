@@ -311,12 +311,13 @@ AudiopluginAudioProcessorEditor::AudiopluginAudioProcessorEditor (AudiopluginAud
 
 AudiopluginAudioProcessorEditor::~AudiopluginAudioProcessorEditor()
 {
+    main.removeAllChildren();
 }
 
 //==============================================================================
 void AudiopluginAudioProcessorEditor::paint (juce::Graphics& g)
 {
-    g.fillAll(juce::Colour(0xffb140f7));
+    g.fillAll(juce::Colour(0xffe7d1ff).withMultipliedBrightness(0.8));
     getLookAndFeel().setColour(juce::Slider::thumbColourId, juce::Colour(0xff6500a3));
     getLookAndFeel().setColour(juce::Slider::backgroundColourId, juce::Colours::beige);
     getLookAndFeel().setColour(juce::Slider::trackColourId, juce::Colour(0xff6500a3));
